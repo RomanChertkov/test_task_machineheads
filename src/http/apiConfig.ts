@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { AuthResponse } from '../components/models/Auth'
+import { AuthResponse } from '../models/Auth'
 import { getCookieValueByKey } from '../utils/getCookieValueByKey'
 import { setTokensInCookie } from '../utils/setTokensInCookie'
 // import {store} from "../index";
@@ -8,7 +8,6 @@ import { setTokensInCookie } from '../utils/setTokensInCookie'
 export const API_URL = `http://rest-test.machineheads.ru`
 
 const api = axios.create({
-  withCredentials: true,
   baseURL: API_URL,
 })
 

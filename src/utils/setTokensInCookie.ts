@@ -1,4 +1,4 @@
-import { AuthResponse } from '../components/models/Auth'
+import { AuthResponse } from '../models/Auth'
 
 export function setTokensInCookie(data: AuthResponse): void {
   const { access_token, refresh_token, refresh_expired_at, access_expired_at } =

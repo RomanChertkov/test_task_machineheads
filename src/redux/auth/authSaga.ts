@@ -1,14 +1,19 @@
 import { call, takeEvery, put, takeLatest, select } from 'redux-saga/effects'
 import { AuthConstants } from './authConstants'
-import { LoginData } from '../../components/models/UserProfile'
+import { LoginData, UserProfile } from '../../models/UserProfile'
 import { actionWithPayload } from '../store'
-import { login, refreshBothTokens } from '../../http/authService'
-import { AuthResponse } from '../../components/models/Auth'
+import {
+  getUserProfile,
+  login,
+  refreshBothTokens,
+} from '../../http/authService'
+import { AuthResponse } from '../../models/Auth'
 import { AxiosResponse } from 'axios'
 import {
   setAuthErrorMessage,
   setIsAuth,
   setIsFetchingData,
+  setProfileInfo,
 } from './authActions'
 import { getCookieValueByKey } from '../../utils/getCookieValueByKey'
 import { setTokensInCookie } from '../../utils/setTokensInCookie'
@@ -22,9 +27,13 @@ function* authWorker(action: actionWithPayload<LoginData>) {
       login,
       action.payload
     )
+
     setTokensInCookie(result.data)
 
     yield put(setIsAuth(true))
+
+    const profileInfo: AxiosResponse<UserProfile> = yield call(getUserProfile)
+    yield put(setProfileInfo(profileInfo.data))
   } catch (error: unknown) {
     if (error instanceof Error) {
       yield put(setAuthErrorMessage(error.message))
@@ -60,6 +69,13 @@ function* checkAuthToken() {
         yield put(setAuthErrorMessage(error.message))
       }
     }
+  }
+
+  const profile: UserProfile = yield select((state) => state.auth.profile)
+
+  if (!profile.id && isAuth) {
+    const profileInfo: AxiosResponse<UserProfile> = yield call(getUserProfile)
+    yield put(setProfileInfo(profileInfo.data))
   }
 }
 

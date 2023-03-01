@@ -1,8 +1,8 @@
-import { API_URL } from './apiConfig'
+import api, { API_URL } from './apiConfig'
 import axios from 'axios'
 import { AxiosResponse } from 'axios'
-import { AuthResponse } from '../components/models/Auth'
-import { LoginData } from '../components/models/UserProfile'
+import { AuthResponse } from '../models/Auth'
+import { LoginData, UserProfile } from '../models/UserProfile'
 import { getCookieValueByKey } from '../utils/getCookieValueByKey'
 
 export async function login(
@@ -52,6 +52,16 @@ export async function refreshBothTokens(
       }
       throw Error(error.message)
     }
+    throw error as Error
+  }
+}
+
+export async function getUserProfile(): Promise<
+  AxiosResponse<UserProfile> | Error
+> {
+  try {
+    return await api.get<UserProfile>('/profile')
+  } catch (error: unknown) {
     throw error as Error
   }
 }

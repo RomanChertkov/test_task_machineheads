@@ -1,17 +1,17 @@
 import { AnyAction } from 'redux'
-import { UserProfile } from '../../components/models/UserProfile'
+import { UserProfile } from '../../models/UserProfile'
 import { AuthConstants } from './authConstants'
 
 interface authState {
   isAuth: boolean
-  profile: UserProfile | undefined
+  profile: UserProfile
   isFetchingData: boolean
   errorMessage: string
 }
 
 const intitialState: authState = {
   isAuth: false,
-  profile: undefined,
+  profile: {} as UserProfile,
   isFetchingData: false,
   errorMessage: '',
 }

@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux'
 import { AuthConstants } from './authConstants'
-import { LoginData, UserProfile } from '../../components/models/UserProfile'
+import { LoginData, UserProfile } from '../../models/UserProfile'
 
 export const setIsAuth = (flag: boolean): AnyAction => ({
   type: AuthConstants.SET_IS_AUTH,
@@ -21,9 +21,7 @@ export const setAuthErrorMessage = (errorMessage: string): AnyAction => ({
   payload: errorMessage,
 })
 
-export const setProfileInfo = (
-  profileInfo: UserProfile | undefined
-): AnyAction => ({
+export const setProfileInfo = (profileInfo: UserProfile): AnyAction => ({
   type: AuthConstants.SET_PROFILE_INFO,
   payload: profileInfo,
 })
