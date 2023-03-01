@@ -79,7 +79,14 @@ function* checkAuthToken() {
   }
 }
 
+function* logoutAndClearData() {
+  document.cookie = ''
+  yield put(setIsAuth(false))
+  yield put(setProfileInfo({} as UserProfile))
+}
+
 export function* authWather() {
   yield takeLatest('@@router/LOCATION_CHANGE', checkAuthToken)
   yield takeEvery(AuthConstants.GET_AUTH_DATA, authWorker)
+  yield takeEvery(AuthConstants.LOGOUT_FROM_ACCOUNT, logoutAndClearData)
 }

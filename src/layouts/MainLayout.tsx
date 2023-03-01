@@ -7,8 +7,9 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons'
 import { Layout, Menu, theme, Button, Space, Typography, Avatar } from 'antd'
-import { useAppSelector } from '../hooks/redux-hooks'
+import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { UserProfile } from '../models/UserProfile'
+import { logout } from '../redux/auth/authActions'
 
 const { Header, Sider, Content } = Layout
 const { Text } = Typography
@@ -18,12 +19,15 @@ const MainLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const { name, lastName } = useAppSelector(
     (state) => state.auth.profile as UserProfile
   )
+  const dispatch = useAppDispatch()
   const {
     token: { colorBgContainer },
   } = theme.useToken()
-  function logout() {
-    document.cookie = ''
+
+  function logoutHandler() {
+    dispatch(logout())
   }
+
   return (
     <Layout style={{ width: '100vw', height: '100vh' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -73,7 +77,7 @@ const MainLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
               Привет, {name} {lastName}
             </Text>
 
-            <Button type="primary" onClick={logout}>
+            <Button type="primary" onClick={logoutHandler}>
               Выйти
             </Button>
           </Space>

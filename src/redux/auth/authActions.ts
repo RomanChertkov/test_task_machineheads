@@ -25,3 +25,7 @@ export const setProfileInfo = (profileInfo: UserProfile): AnyAction => ({
   type: AuthConstants.SET_PROFILE_INFO,
   payload: profileInfo,
 })
+
+export const logout = (): AnyAction => ({
+  type: AuthConstants.LOGOUT_FROM_ACCOUNT,
+})
