@@ -1,16 +1,28 @@
 import { FC } from 'react'
-import { Button, Form, Input, Typography } from 'antd'
+import { Button, Form, Input, Typography, Alert } from 'antd'
+import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
+import { getAuthData } from '../redux/auth/authActions'
 
 const { Title } = Typography
 
+interface LoginData {
+  email: string
+  password: string
+}
+
 const LoginForm: FC = () => {
-  const onFinish = (values: any) => {
+  const { isFetchingData, errorMessage } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
+
+  const onFinish = (values: LoginData) => {
+    dispatch(getAuthData(values))
     console.log('Success:', values)
   }
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo)
   }
+
   return (
     <Form
       name="basic"
@@ -21,6 +33,7 @@ const LoginForm: FC = () => {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
+      {errorMessage && <Alert message={errorMessage} type="error" closable />}
       <Form.Item
         label="Email"
         name="email"
@@ -44,7 +57,7 @@ const LoginForm: FC = () => {
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={isFetchingData}>
           Submit
         </Button>
       </Form.Item>

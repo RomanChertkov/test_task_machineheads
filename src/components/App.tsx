@@ -2,11 +2,15 @@ import { Route, Switch } from 'react-router-dom'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import MainLayout from '../layouts/MainLayout'
+import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
+import { getCookieValueByKey } from '../utils/getCookieValueByKey'
+import { useEffect } from 'react'
+import { setIsAuth } from '../redux/auth/authActions'
 //TODO add lazy import
 function App() {
-  const isAuth = !false
+  const { isAuth } = useAppSelector((state) => state.auth)
 
-  if (isAuth) {
+  if (!isAuth) {
     return <LoginPage />
   }
 
