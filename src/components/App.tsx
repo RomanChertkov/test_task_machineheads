@@ -1,33 +1,43 @@
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/LoginPage'
 import MainLayout from '../layouts/MainLayout'
-import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { getCookieValueByKey } from '../utils/getCookieValueByKey'
-import { useEffect } from 'react'
-import { setIsAuth } from '../redux/auth/authActions'
+import { useAppSelector } from '../hooks/redux-hooks'
+
+import AuthorsPage from '../pages/AuthorsPage'
 //TODO add lazy import
 function App() {
   const { isAuth } = useAppSelector((state) => state.auth)
 
   if (!isAuth) {
-    return <LoginPage />
+    return (
+      <Switch>
+        <Route exact path="/login">
+          <LoginPage />
+        </Route>
+        <Route path="*">
+          <Redirect to="/login" />
+        </Route>
+      </Switch>
+    )
   }
 
   return (
     <MainLayout>
       <Switch>
-        <Route exact path="/">
+        <Route exact path="/posts">
           <HomePage />
         </Route>
-        {/* <Route path="/about">
-        <About />
-      </Route>
-      {/* Can also use a named `children` prop */}
+        <Route exact path="/authors">
+          <AuthorsPage />
+        </Route>
+        <Route path="*">
+          <Redirect to="/posts" />
+        </Route>
         {/*<Route path="/users/:id" children={<User />} />
       <Route path="/about">
-        <NoMatchPage />
-      </Route> */}
+      <NoMatchPage />
+    </Route> */}
       </Switch>
     </MainLayout>
   )

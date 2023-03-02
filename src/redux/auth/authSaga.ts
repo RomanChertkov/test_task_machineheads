@@ -1,4 +1,6 @@
 import { call, takeEvery, put, takeLatest, select } from 'redux-saga/effects'
+import { LOCATION_CHANGE } from 'connected-react-router'
+import { AxiosResponse } from 'axios'
 import { AuthConstants } from './authConstants'
 import { LoginData, UserProfile } from '../../models/UserProfile'
 import { actionWithPayload } from '../store'
@@ -8,15 +10,17 @@ import {
   refreshBothTokens,
 } from '../../http/authService'
 import { AuthResponse } from '../../models/Auth'
-import { AxiosResponse } from 'axios'
 import {
   setAuthErrorMessage,
   setIsAuth,
   setIsFetchingData,
   setProfileInfo,
 } from './authActions'
-import { getCookieValueByKey } from '../../utils/getCookieValueByKey'
-import { setTokensInCookie } from '../../utils/setTokensInCookie'
+import {
+  clearTokensFromCookie,
+  setTokensInCookie,
+  getCookieByKey,
+} from '../../utils/cookieUtils'
 
 function* authWorker(action: actionWithPayload<LoginData>) {
   yield put(setIsFetchingData())
@@ -44,8 +48,8 @@ function* authWorker(action: actionWithPayload<LoginData>) {
 }
 
 function* checkAuthToken() {
-  const token = getCookieValueByKey('token')
-  const refreshToken = getCookieValueByKey('refresh_token')
+  const token = getCookieByKey('token')
+  const refreshToken = getCookieByKey('refresh_token')
 
   const isAuth: boolean = yield select((state) => state.auth.isAuth)
 
@@ -80,13 +84,13 @@ function* checkAuthToken() {
 }
 
 function* logoutAndClearData() {
-  document.cookie = ''
+  clearTokensFromCookie()
   yield put(setIsAuth(false))
   yield put(setProfileInfo({} as UserProfile))
 }
 
 export function* authWather() {
-  yield takeLatest('@@router/LOCATION_CHANGE', checkAuthToken)
+  yield takeLatest(LOCATION_CHANGE, checkAuthToken)
   yield takeEvery(AuthConstants.GET_AUTH_DATA, authWorker)
   yield takeEvery(AuthConstants.LOGOUT_FROM_ACCOUNT, logoutAndClearData)
 }
