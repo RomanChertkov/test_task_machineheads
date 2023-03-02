@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { AuthResponse } from '../models/Auth'
-import { getCookieValueByKey } from '../utils/getCookieValueByKey'
-import { setTokensInCookie } from '../utils/setTokensInCookie'
+import { getCookieByKey } from '../utils/cookieUtils'
 // import {store} from "../index";
 // import {IUser} from "../models/IUser";
 
@@ -12,7 +11,7 @@ const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${getCookieValueByKey('token')}`
+  config.headers.Authorization = `Bearer ${getCookieByKey('token')}`
   return config
 })
 
