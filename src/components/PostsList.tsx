@@ -2,12 +2,14 @@ import { Avatar, Button, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
 import { Post } from '../models/Posts'
+import { formatDate } from '../utils/dateUtils'
 
 interface PostsListProps {
   posts: Post[]
+  openPostEditor: (postId: number) => void
 }
 
-const PostsList: FC<PostsListProps> = ({ posts }) => {
+const PostsList: FC<PostsListProps> = ({ posts, openPostEditor }) => {
   return (
     <>
       <List
@@ -24,7 +26,7 @@ const PostsList: FC<PostsListProps> = ({ posts }) => {
         renderItem={(item) => (
           <List.Item
             actions={[
-              <Button type="primary">
+              <Button type="primary" onClick={() => openPostEditor(item.id)}>
                 <EditOutlined />
                 Редактировать
               </Button>,
@@ -35,8 +37,10 @@ const PostsList: FC<PostsListProps> = ({ posts }) => {
           >
             <List.Item.Meta
               avatar={<Avatar size={'large'} src={item.previewPicture.url} />}
-              title={<a href="https://ant.design">{item.title}</a>}
-              description={`${item.authorName} опубликовал в ${item.createdAt}`}
+              title={item.title}
+              description={`${item.authorName} опубликовал в ${formatDate(
+                item.createdAt
+              )}`}
             />
           </List.Item>
         )}
