@@ -1,11 +1,6 @@
-// export const AuthorsConstants = {
-//   SET_AUTHORS: 'SET_AUTHORS',
-//   GET_AUTHORS: 'GET_AUTHORS',
-// }
+const prefix = 'authors/'
 
 export enum AuthorsConstants {
-  SET_AUTHORS = 'SET_AUTHORS',
-  GET_AUTHORS = 'GET_AUTHORS',
+  SET_AUTHORS = prefix + 'SET_AUTHORS',
+  GET_AUTHORS = prefix + 'GET_AUTHORS',
 }
-
-export type AuthorsConstantsTypes = keyof typeof AuthorsConstants
