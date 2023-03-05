@@ -2,16 +2,16 @@ import { Layout } from 'antd'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import AppHeader from '../components/AppHeader'
 import AppSidebar from '../components/AppSidebar'
-import { logout } from '../redux/auth/authActions'
+import { authActions } from '../redux/auth/authActions'
 
 const { Content } = Layout
 
 const MainLayout: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const profile = useAppSelector((state) => state.auth.profile)
-
   const dispatch = useAppDispatch()
+
   function logoutHandler() {
-    dispatch(logout())
+    dispatch(authActions.logout())
   }
 
   return (

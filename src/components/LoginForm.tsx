@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Button, Form, Input, Typography, Alert } from 'antd'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { getAuthData } from '../redux/auth/authActions'
+import { authActions } from '../redux/auth/authActions'
 
 const { Title } = Typography
 
@@ -15,7 +15,7 @@ const LoginForm: FC = () => {
   const dispatch = useAppDispatch()
 
   const onFinish = (values: LoginData) => {
-    dispatch(getAuthData(values))
+    dispatch(authActions.getAuthData(values))
     console.log('Success:', values)
   }
 

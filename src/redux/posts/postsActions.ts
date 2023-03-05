@@ -1,23 +1,31 @@
-import { AnyAction } from 'redux'
+import { InferActionsType } from '../store'
+import { Post, PostDetails } from '../../models/Posts'
 import { PostsConstants } from './postsConstants'
-import { PostDetails } from '../../models/Posts'
 
-export const setPosts = (posts: any): AnyAction => ({
-  type: PostsConstants.SET_POSTS,
-  payload: posts,
-})
+export const postActions = {
+  setPosts: (posts: Post[]) =>
+    ({
+      type: PostsConstants.SET_POSTS,
+      payload: posts,
+    } as const),
 
-export const setIsPostFetching = (flag: boolean): AnyAction => ({
-  type: PostsConstants.SET_IS_DATA_FETCHING,
-  payload: flag,
-})
+  setIsPostFetching: (flag: boolean) =>
+    ({
+      type: PostsConstants.SET_IS_DATA_FETCHING,
+      payload: flag,
+    } as const),
 
-export const setEditingPost = (postData: PostDetails) => ({
-  type: PostsConstants.SET_CURRENT_POST_DATA,
-  payload: postData,
-})
+  setEditingPost: (postData: PostDetails) =>
+    ({
+      type: PostsConstants.SET_CURRENT_POST_DATA,
+      payload: postData,
+    } as const),
 
-export const getPostDetail = (postId: number) => ({
-  type: PostsConstants.GET_POST_DETAIL,
-  payload: postId,
-})
+  getPostDetail: (postId: number) =>
+    ({
+      type: PostsConstants.GET_POST_DETAIL,
+      payload: postId,
+    } as const),
+}
+
+export type AppPostActions = InferActionsType<typeof postActions>

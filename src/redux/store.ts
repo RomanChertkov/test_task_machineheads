@@ -28,3 +28,7 @@ export type actionWithPayload<T> = {
   type: string
   payload: T
 }
+
+export type InferActionsType<
+  T extends { [key: string]: (...args: any) => any }
+> = ReturnType<T[keyof T]>

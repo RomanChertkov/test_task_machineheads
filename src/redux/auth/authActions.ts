@@ -1,31 +1,41 @@
-import { AnyAction } from 'redux'
 import { AuthConstants } from './authConstants'
 import { LoginData, UserProfile } from '../../models/UserProfile'
+import { InferActionsType } from '../store'
 
-export const setIsAuth = (flag: boolean): AnyAction => ({
-  type: AuthConstants.SET_IS_AUTH,
-  payload: flag,
-})
+export type AppAuthActions = InferActionsType<typeof authActions>
 
-export const getAuthData = (LoginFormData: LoginData): AnyAction => ({
-  type: AuthConstants.GET_AUTH_DATA,
-  payload: LoginFormData,
-})
+export const authActions = {
+  setIsAuth: (flag: boolean) =>
+    ({
+      type: AuthConstants.SET_IS_AUTH,
+      payload: flag,
+    } as const),
 
-export const setIsFetchingData = (): AnyAction => ({
-  type: AuthConstants.IS_FETHCHING_AUTH_DATA,
-})
+  getAuthData: (LoginFormData: LoginData) =>
+    ({
+      type: AuthConstants.GET_AUTH_DATA,
+      payload: LoginFormData,
+    } as const),
 
-export const setAuthErrorMessage = (errorMessage: string): AnyAction => ({
-  type: AuthConstants.SET_AUTH_ERROR_MESSAGE,
-  payload: errorMessage,
-})
+  setIsFetchingData: () =>
+    ({
+      type: AuthConstants.IS_FETHCHING_AUTH_DATA,
+    } as const),
 
-export const setProfileInfo = (profileInfo: UserProfile): AnyAction => ({
-  type: AuthConstants.SET_PROFILE_INFO,
-  payload: profileInfo,
-})
+  setAuthErrorMessage: (errorMessage: string) =>
+    ({
+      type: AuthConstants.SET_AUTH_ERROR_MESSAGE,
+      payload: errorMessage,
+    } as const),
 
-export const logout = (): AnyAction => ({
-  type: AuthConstants.LOGOUT_FROM_ACCOUNT,
-})
+  setProfileInfo: (profileInfo: UserProfile) =>
+    ({
+      type: AuthConstants.SET_PROFILE_INFO,
+      payload: profileInfo,
+    } as const),
+
+  logout: () =>
+    ({
+      type: AuthConstants.LOGOUT_FROM_ACCOUNT,
+    } as const),
+}

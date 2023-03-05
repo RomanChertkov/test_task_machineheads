@@ -3,90 +3,87 @@ import { LOCATION_CHANGE } from 'connected-react-router'
 import { AxiosResponse } from 'axios'
 import { AuthConstants } from './authConstants'
 import { LoginData, UserProfile } from '../../models/UserProfile'
-import { actionWithPayload } from '../store'
-import {
-  getUserProfile,
-  login,
-  refreshBothTokens,
-} from '../../http/authService'
+import { RootState, actionWithPayload } from '../store'
+import { AuthService } from '../../http/authService'
 import { AuthResponse } from '../../models/Auth'
-import {
-  setAuthErrorMessage,
-  setIsAuth,
-  setIsFetchingData,
-  setProfileInfo,
-} from './authActions'
-import {
-  clearTokensFromCookie,
-  setTokensInCookie,
-  getCookieByKey,
-} from '../../utils/cookieUtils'
+import { authActions } from './authActions'
+import AppCookie from // clearTokensFromCookie,
+// setTokensInCookie,
+// getCookieByKey,,
+
+'../../utils/cookieUtils'
 
 function* authWorker(action: actionWithPayload<LoginData>) {
-  yield put(setIsFetchingData())
-  yield put(setAuthErrorMessage(''))
+  yield put(authActions.setIsFetchingData())
+  yield put(authActions.setAuthErrorMessage(''))
 
   try {
     const result: AxiosResponse<AuthResponse> = yield call(
-      login,
+      AuthService.login,
       action.payload
     )
 
-    setTokensInCookie(result.data)
+    AppCookie.setTokensInCookie(result.data)
 
-    yield put(setIsAuth(true))
+    yield put(authActions.setIsAuth(true))
 
-    const profileInfo: AxiosResponse<UserProfile> = yield call(getUserProfile)
-    yield put(setProfileInfo(profileInfo.data))
+    const profileInfo: AxiosResponse<UserProfile> = yield call(
+      AuthService.getUserProfile
+    )
+    yield put(authActions.setProfileInfo(profileInfo.data))
   } catch (error: unknown) {
     if (error instanceof Error) {
-      yield put(setAuthErrorMessage(error.message))
+      yield put(authActions.setAuthErrorMessage(error.message))
     }
   } finally {
-    yield put(setIsFetchingData())
+    yield put(authActions.setIsFetchingData())
   }
 }
 
 function* checkAuthToken() {
-  const token = getCookieByKey('token')
-  const refreshToken = getCookieByKey('refresh_token')
+  const token = AppCookie.getCookieByKey('token')
+  const refreshToken = AppCookie.getCookieByKey('refresh_token')
 
-  const isAuth: boolean = yield select((state) => state.auth.isAuth)
+  const isAuth: boolean = yield select((state: RootState) => state.auth.isAuth)
 
   if (token && !isAuth) {
-    yield put(setIsAuth(true))
+    yield put(authActions.setIsAuth(true))
   }
 
   if (!token && refreshToken) {
     try {
       const result: AxiosResponse<AuthResponse> = yield call(
-        refreshBothTokens,
+        AuthService.refreshBothTokens,
         refreshToken
       )
 
-      setTokensInCookie(result.data)
+      AppCookie.setTokensInCookie(result.data)
 
-      yield put(setIsAuth(true))
+      yield put(authActions.setIsAuth(true))
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log(error)
-        yield put(setAuthErrorMessage(error.message))
+        yield put(authActions.setAuthErrorMessage(error.message))
       }
     }
   }
 
-  const profile: UserProfile = yield select((state) => state.auth.profile)
+  const profile: UserProfile = yield select(
+    (state: RootState) => state.auth.profile
+  )
 
   if (!profile.id && isAuth) {
-    const profileInfo: AxiosResponse<UserProfile> = yield call(getUserProfile)
-    yield put(setProfileInfo(profileInfo.data))
+    const profileInfo: AxiosResponse<UserProfile> = yield call(
+      AuthService.getUserProfile
+    )
+    yield put(authActions.setProfileInfo(profileInfo.data))
   }
 }
 
 function* logoutAndClearData() {
-  clearTokensFromCookie()
-  yield put(setIsAuth(false))
-  yield put(setProfileInfo({} as UserProfile))
+  AppCookie.clearTokensFromCookie()
+  yield put(authActions.setIsAuth(false))
+  yield put(authActions.setProfileInfo({} as UserProfile))
 }
 
 export function* authWather() {

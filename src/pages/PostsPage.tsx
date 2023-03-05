@@ -5,7 +5,7 @@ import { Post, PostDetails } from '../models/Posts'
 import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
 import AppFormDrawer from '../components/AppFormDrawer'
 import { useState } from 'react'
-import { getPostDetail } from '../redux/posts/postsActions'
+import { postActions } from '../redux/posts/postsActions'
 const { Title } = Typography
 
 export default function HomePage() {
@@ -18,7 +18,7 @@ export default function HomePage() {
   const [open, setOpen] = useState(false)
 
   function openPostEditor(postId: number) {
-    dispatch(getPostDetail(postId))
+    dispatch(postActions.getPostDetail(postId))
     setOpen(true)
   }
   function closeEditor() {

@@ -1,22 +1,20 @@
-import { AnyAction } from 'redux'
 import { UserProfile } from '../../models/UserProfile'
 import { AuthConstants } from './authConstants'
+import { AppAuthActions } from './authActions'
 
-interface authState {
-  isAuth: boolean
-  profile: UserProfile
-  isFetchingData: boolean
-  errorMessage: string
-}
+type AuthState = typeof intitialState
 
-const intitialState: authState = {
+const intitialState = {
   isAuth: false,
   profile: {} as UserProfile,
   isFetchingData: false,
   errorMessage: '',
 }
 
-export const authReducer = (state = intitialState, action: AnyAction) => {
+export const authReducer = (
+  state = intitialState,
+  action: AppAuthActions
+): AuthState => {
   switch (action.type) {
     case AuthConstants.SET_IS_AUTH:
       return { ...state, isAuth: action.payload }
