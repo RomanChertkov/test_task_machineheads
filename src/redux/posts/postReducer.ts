@@ -1,4 +1,4 @@
-import { Post, PostDetails } from '../../models/Posts'
+import { Post, PostDetails } from '../../models/Post'
 import { AppPostActions } from './postsActions'
 import { PostsConstants } from './postsConstants'
 

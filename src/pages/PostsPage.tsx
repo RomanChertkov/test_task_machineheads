@@ -1,7 +1,7 @@
 import { Button, Space, Typography } from 'antd'
 import PostsList from '../components/PostsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { Post, PostDetails } from '../models/Posts'
+import { Post, PostDetails } from '../models/Post'
 import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
 import AppFormDrawer from '../components/AppFormDrawer'
 import { useState } from 'react'

@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { select, takeLatest, call, put, takeEvery } from 'redux-saga/effects'
 import { postActions } from './postsActions'
-import { Post, PostDetails } from '../../models/Posts'
+import { Post, PostDetails } from '../../models/Post'
 import { PostService } from '../../http/postService'
 import { LOCATION_CHANGE } from 'connected-react-router'
 import { PostsConstants } from './postsConstants'

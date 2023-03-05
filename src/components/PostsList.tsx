@@ -1,7 +1,7 @@
 import { Avatar, Button, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
-import { Post } from '../models/Posts'
+import { Post } from '../models/Post'
 import { formatDate } from '../utils/dateUtils'
 
 interface PostsListProps {

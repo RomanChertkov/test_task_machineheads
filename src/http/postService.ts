@@ -1,4 +1,4 @@
-import { PostDetails } from '../models/Posts'
+import { PostDetails } from '../models/Post'
 import api from './apiConfig'
 //TODO trow errors
 

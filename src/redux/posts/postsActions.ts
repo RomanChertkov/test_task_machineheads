@@ -1,5 +1,5 @@
 import { InferActionsType } from '../store'
-import { Post, PostDetails } from '../../models/Posts'
+import { Post, PostDetails } from '../../models/Post'
 import { PostsConstants } from './postsConstants'
 
 export const postActions = {

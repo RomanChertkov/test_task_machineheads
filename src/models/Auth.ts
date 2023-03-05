@@ -4,7 +4,3 @@ export interface AuthResponse {
   access_expired_at: number
   refresh_expired_at: number
 }
-
-// export interface AuthResponseFail {
-
-// }
