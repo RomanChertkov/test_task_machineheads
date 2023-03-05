@@ -33,7 +33,7 @@ function App() {
         <Route exact path="/authors">
           <AuthorsPage />
         </Route>
-        <Route exact path="/tags3">
+        <Route exact path="/tags">
           <TagsPage />
         </Route>
         <Route exact path="/login">

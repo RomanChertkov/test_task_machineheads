@@ -1,14 +1,15 @@
-import { Avatar, Button, List } from 'antd'
+import { Button, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
-import { Author } from '../models/Author'
+import { Tag } from '../models/Tag'
+import { formatDate } from '../utils/dateUtils'
 
-interface AuthorListProps {
-  authorList: Author[]
+interface TagsListProps {
+  tagsList: Tag[]
   openPostEditor?: (itemId: number) => void
 }
 
-const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
+const TagsList: FC<TagsListProps> = ({ tagsList, openPostEditor }) => {
   return (
     <>
       <List
@@ -17,11 +18,11 @@ const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
           onChange: (page) => {
             console.log(page)
           },
-          pageSize: 5,
+          pageSize: 10,
         }}
         bordered
         loading={false}
-        dataSource={authorList}
+        dataSource={tagsList}
         renderItem={(item) => (
           <List.Item
             actions={[
@@ -35,11 +36,11 @@ const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
             ]}
           >
             <List.Item.Meta
-              avatar={<Avatar size={'large'} src={item.avatar.url} />}
-              title={`${item.lastName} ${item.name} ${item.secondName}`}
-              //   description={`${item.} опубликовал в ${formatDate(
-              //     item.createdAt
-              //   )}`}
+              // avatar={<Avatar size={'large'} src={item.avatar.url} />}
+              title={item.name}
+              description={`Код: ${item.code}. Создано  ${formatDate(
+                item.createdAt
+              )}`}
             />
           </List.Item>
         )}
@@ -48,4 +49,4 @@ const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
   )
 }
 
-export default AuthorsList
+export default TagsList
