@@ -6,10 +6,11 @@ import { formatDate } from '../utils/dateUtils'
 
 interface TagsListProps {
   tagsList: Tag[]
-  openPostEditor?: (itemId: number) => void
+  openEditor: (itemId: number) => void
+  delItem: (itemId: number) => void
 }
 
-const TagsList: FC<TagsListProps> = ({ tagsList, openPostEditor }) => {
+const TagsList: FC<TagsListProps> = ({ tagsList, openEditor, delItem }) => {
   return (
     <>
       <List
@@ -26,11 +27,11 @@ const TagsList: FC<TagsListProps> = ({ tagsList, openPostEditor }) => {
         renderItem={(item) => (
           <List.Item
             actions={[
-              <Button type="primary">
+              <Button type="primary" onClick={() => openEditor(item.id)}>
                 <EditOutlined />
                 Редактировать
               </Button>,
-              <Button type="primary" danger>
+              <Button type="primary" danger onClick={() => delItem(item.id)}>
                 <DeleteOutlined /> Удалить
               </Button>,
             ]}

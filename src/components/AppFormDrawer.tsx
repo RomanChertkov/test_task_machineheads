@@ -17,26 +17,34 @@ const { Option } = Select
 interface AppFormDrawerProps {
   isEditorOpen: boolean
   close: () => void
+  title: string
+  children: JSX.Element
 }
-const AppFormDrawer: FC<AppFormDrawerProps> = ({ isEditorOpen, close }) => {
+const AppFormDrawer: FC<AppFormDrawerProps> = ({
+  isEditorOpen,
+  close,
+  children,
+  title,
+}) => {
   return (
     <>
       <Drawer
-        title="Редактирование Поста"
+        title={title}
         width="80vw"
         onClose={close}
         open={isEditorOpen}
         bodyStyle={{ paddingBottom: 80 }}
-        extra={
-          <Space>
-            <Button onClick={close}>Закрыть</Button>
-            <Button onClick={close} type="primary">
-              Сохранить
-            </Button>
-          </Space>
-        }
+        // extra={
+        //   <Space>
+        //     <Button onClick={close}>Закрыть</Button>
+        //     <Button onClick={close} type="primary">
+        //       Сохранить
+        //     </Button>
+        //   </Space>
+        // }
       >
-        <Form layout="vertical" hideRequiredMark>
+        {children}
+        {/* <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
@@ -148,7 +156,7 @@ const AppFormDrawer: FC<AppFormDrawerProps> = ({ isEditorOpen, close }) => {
               </Space>
             </Col>
           </Row>
-        </Form>
+        </Form> */}
       </Drawer>
     </>
   )
