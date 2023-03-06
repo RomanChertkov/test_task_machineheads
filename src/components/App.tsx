@@ -1,13 +1,19 @@
+import React, { Suspense } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import PostsPage from '../pages/PostsPage'
-import LoginPage from '../pages/LoginPage'
-import MainLayout from '../layouts/MainLayout'
 import { useAppSelector } from '../hooks/redux-hooks'
 
-import AuthorsPage from '../pages/AuthorsPage'
-import TagsPage from '../pages/TagsPage'
+import MainLayout from '../layouts/MainLayout'
+import LoginPage from '../pages/LoginPage'
 import NotFoundPage from '../pages/NotFoundPage'
-//TODO add lazy import
+import { Skeleton } from 'antd'
+import ErrorBoundary from './ErrorBoundary'
+
+const PostsPage = React.lazy(() => import('../pages/PostsPage'))
+const AuthorsPage = React.lazy(() => import('../pages/AuthorsPage'))
+const TagsPage = React.lazy(() => import('../pages/TagsPage'))
+// import AuthorsPage from '../pages/AuthorsPage'
+// import TagsPage from '../pages/TagsPage'
+
 function App() {
   const { isAuth } = useAppSelector((state) => state.auth)
 
@@ -28,25 +34,32 @@ function App() {
     <MainLayout>
       <Switch>
         <Route exact path="/posts">
-          <PostsPage />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton />}>
+              <PostsPage />
+            </Suspense>
+          </ErrorBoundary>
         </Route>
         <Route exact path="/authors">
-          <AuthorsPage />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton />}>
+              <AuthorsPage />
+            </Suspense>
+          </ErrorBoundary>
         </Route>
         <Route exact path="/tags">
-          <TagsPage />
+          <ErrorBoundary>
+            <Suspense fallback={<Skeleton />}>
+              <TagsPage />
+            </Suspense>
+          </ErrorBoundary>
         </Route>
         <Route exact path="/login">
           <Redirect to="/posts" />
         </Route>
         <Route path="*">
           <NotFoundPage />
-          {/* <Redirect to="/posts" /> */}
         </Route>
-        {/*<Route path="/users/:id" children={<User />} />
-      <Route path="/about">
-      <NoMatchPage />
-    </Route> */}
       </Switch>
     </MainLayout>
   )
