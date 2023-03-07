@@ -2,13 +2,19 @@ import { Avatar, Button, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
 import { Author } from '../models/Author'
+import { formatDate } from '../utils/dateUtils'
 
 interface AuthorListProps {
-  authorList: Author[]
-  openPostEditor?: (itemId: number) => void
+  authorsList: Author[]
+  openEditor: (itemId: number) => void
+  delItem: (itemId: number) => void
 }
 
-const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
+const AuthorsList: FC<AuthorListProps> = ({
+  authorsList,
+  openEditor,
+  delItem,
+}) => {
   return (
     <>
       <List
@@ -21,25 +27,23 @@ const AuthorsList: FC<AuthorListProps> = ({ authorList, openPostEditor }) => {
         }}
         bordered
         loading={false}
-        dataSource={authorList}
+        dataSource={authorsList}
         renderItem={(item) => (
           <List.Item
             actions={[
-              <Button type="primary">
+              <Button type="primary" onClick={() => openEditor(item.id)}>
                 <EditOutlined />
                 Редактировать
               </Button>,
-              <Button type="primary" danger>
+              <Button type="primary" danger onClick={() => delItem(item.id)}>
                 <DeleteOutlined /> Удалить
               </Button>,
             ]}
           >
             <List.Item.Meta
-              avatar={<Avatar size={'large'} src={item.avatar.url} />}
+              avatar={<Avatar size={'large'} src={item.avatar?.url} />}
               title={`${item.lastName} ${item.name} ${item.secondName}`}
-              //   description={`${item.} опубликовал в ${formatDate(
-              //     item.createdAt
-              //   )}`}
+              description={`Добавлен в ${formatDate(item.createdAt)}`}
             />
           </List.Item>
         )}

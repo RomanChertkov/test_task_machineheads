@@ -8,6 +8,7 @@ import { TagsActions } from '../redux/tags/tagsActions'
 import TagsForm from '../components/TagsForm'
 import { Tag } from '../models/Tag'
 import { FormError, ResponseError } from '../models/Errors'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 const { Title } = Typography
 interface TagsPageProps {}
@@ -62,7 +63,7 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       {contextHolder}
 
       {/* {successAction &&
@@ -91,7 +92,7 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
       >
         <TagsForm isNew={isNew} />
       </AppFormDrawer>
-    </>
+    </ErrorBoundary>
   )
 }
 export default TagsPage

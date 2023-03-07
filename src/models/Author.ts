@@ -1,3 +1,4 @@
+import { UploadFile } from 'antd'
 import { Avatar } from './Avatar'
 
 export interface Author {
@@ -14,3 +15,9 @@ export interface AuthorDetails extends Author {
   shortDescription: string
   description: string
 }
+
+export type EditAuthor = {
+  avatar: UploadFile | File | undefined
+  removeAvatar: number
+} & Omit<AuthorDetails, 'updatedAt' | 'createdAt' | 'avatar'>
+export type NewAuthor = Omit<EditAuthor, 'id'>

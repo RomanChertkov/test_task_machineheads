@@ -6,6 +6,8 @@ import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
 import AppFormDrawer from '../components/AppFormDrawer'
 import { useState } from 'react'
 import { postActions } from '../redux/posts/postsActions'
+import ErrorBoundary from '../components/ErrorBoundary'
+
 const { Title } = Typography
 
 export default function HomePage() {
@@ -26,7 +28,7 @@ export default function HomePage() {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       <Title>Посты</Title>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <Button size="large" type="primary">
@@ -37,7 +39,9 @@ export default function HomePage() {
         <PostsList posts={postsList} openPostEditor={openPostEditor} />
       </Space>
 
-      <AppFormDrawer isEditorOpen={open} close={closeEditor} />
-    </>
+      {/* <AppFormDrawer isEditorOpen={open} close={closeEditor}>
+        <div></div>
+      </AppFormDrawer> */}
+    </ErrorBoundary>
   )
 }

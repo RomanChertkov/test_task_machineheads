@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from 'axios'
-import { Author, AuthorDetails } from '../models/Author'
+import axios, { AxiosError, AxiosResponse } from 'axios'
+import { Author, AuthorDetails, EditAuthor, NewAuthor } from '../models/Author'
 import api from './apiConfig'
 
 export class AuthorsService {
@@ -7,43 +7,67 @@ export class AuthorsService {
     try {
       return await api.get<Author[]>('/manage/authors')
     } catch (error) {
-      throw error as Error
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
+      }
+      throw error
     }
   }
 
   static async getAuthorsDetail(authorId: number) {
     try {
-      return await api.get<AuthorDetails>('/manage/posts/detail', {
+      return await api.get<AuthorDetails>('/manage/authors/detail', {
         params: { id: authorId },
       })
     } catch (error) {
-      if (error instanceof Error) {
-        throw Error(error.message)
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
       }
+      throw error
     }
   }
 
-  static async addAuthor(newAuthor: AuthorDetails) {
+  static async addAuthor(newAuthor: NewAuthor) {
     try {
-      return await api.post<AuthorDetails>('/manage/authors/add', newAuthor)
-    } catch (error) {}
+      return await api.post('/manage/authors/add', newAuthor, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
+      }
+      throw error
+    }
   }
-  static async editAuthor(currentAuthor: AuthorDetails) {
+
+  static async editAuthor(currentAuthor: EditAuthor) {
+    const {
+      avatar,
+      description,
+      shortDescription,
+      name,
+      lastName,
+      secondName,
+      id,
+    } = currentAuthor
     try {
-      return await api.post<AuthorDetails>(
+      return await api.post(
         '/manage/authors/edit',
-        currentAuthor,
+        { avatar, description, shortDescription, name, lastName, secondName },
         {
-          params: { id: currentAuthor.id },
+          params: { id },
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       )
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 400) throw Error('Данные не корректны')
-        if (error.response?.status === 422) throw Error('Ошибки в форме')
-
-        throw Error()
-      } else throw Error('Произошла неизвестная ошибка')
+        throw error as AxiosError
+      }
+      throw error
     }
   }
 
@@ -52,14 +76,26 @@ export class AuthorsService {
       return await api.delete('/manage/authors/remove', {
         params: { id: authorId },
       })
-    } catch (error) {}
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
+      }
+      throw error
+    }
   }
 
-  static async multipleremoveAuthors(ids: number[]) {
-    try {
-      return await api.delete('/manage/authors/multiple-remove', {
-        params: { id: ids },
-      })
-    } catch (error) {}
-  }
+  // static async multipleremoveAuthors(ids: number[]) {
+  //   try {
+  //     return await api.delete('/manage/authors/multiple-remove', {
+  //       params: { id: ids },
+  // headers: {
+  //   'Content-Type': 'multipart/form-data',
+  // },
+  //     })
+  //   } catch (error) {
+  // if (axios.isAxiosError(error)) {
+  //   throw error as AxiosError
+  // }
+  // throw error
+  // }
 }

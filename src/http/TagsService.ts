@@ -51,6 +51,9 @@ export class TagsService {
         { name, code, sort },
         {
           params: { id },
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       )
     } catch (error) {
