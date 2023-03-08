@@ -1,47 +1,89 @@
-import { Button, Space, Typography } from 'antd'
+import { Button, Space, Typography, notification } from 'antd'
 import PostsList from '../components/PostsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { Post, PostDetails } from '../models/Post'
-import { CloudUploadOutlined, PlusOutlined } from '@ant-design/icons'
+import { PostDetails } from '../models/Post'
+import { PlusOutlined } from '@ant-design/icons'
 import AppFormDrawer from '../components/AppFormDrawer'
-import { useState } from 'react'
-import { postActions } from '../redux/posts/postsActions'
+import { useEffect, useState } from 'react'
+import { postsActions } from '../redux/posts/postsActions'
 import ErrorBoundary from '../components/ErrorBoundary'
+import { FormError, ResponseError } from '../models/Errors'
+import PostsForm from '../components/PostsForm'
 
 const { Title } = Typography
 
 export default function HomePage() {
-  const currentPostDetail: PostDetails = useAppSelector(
-    (state) => state.posts.currentPostDetail
-  )
-  const postsList: Post[] = useAppSelector((state) => state.posts.postsList)
   const dispatch = useAppDispatch()
+  const { posts, responseErrors, successMessage } = useAppSelector(
+    (state) => state.posts
+  )
 
   const [open, setOpen] = useState(false)
+  const [isNew, setIsNew] = useState(false)
 
-  function openPostEditor(postId: number) {
-    dispatch(postActions.getPostDetail(postId))
+  //const {contextHolder, NotificationCall} = useAppNotification()
+  const [api, contextHolder] = notification.useNotification()
+
+  useEffect(() => {
+    successMessage &&
+      api.success({
+        message: successMessage,
+      })
+  }, [successMessage])
+
+  useEffect(() => {
+    responseErrors.name &&
+      api.error({
+        message: responseErrors.name,
+        description: responseErrors.message,
+      })
+  }, [responseErrors])
+
+  function openEditor(postId: number) {
+    dispatch(postsActions.getPostDetail(postId))
     setOpen(true)
   }
+
+  function delItem(postId: number) {
+    dispatch(postsActions.deletePost(postId))
+  }
+
+  function openEmptyEditor() {
+    setOpen(true)
+    setIsNew(true)
+  }
+
   function closeEditor() {
+    //clearAllErrorsAndCurrentItem()
+    dispatch(postsActions.setResponseError({} as ResponseError))
+    dispatch(postsActions.setSuccessMessage(''))
+    dispatch(postsActions.setFormErrors([] as FormError[]))
+    dispatch(postsActions.setCurrentPostDetail({} as PostDetails))
+    setIsNew(false)
     setOpen(false)
   }
 
   return (
     <ErrorBoundary>
+      {contextHolder}
+
       <Title>Посты</Title>
+
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Button size="large" type="primary">
-          <CloudUploadOutlined />
-          {/* <PlusOutlined /> */}
+        <Button size="large" type="primary" onClick={openEmptyEditor}>
+          <PlusOutlined />
           Добавить новый пост
         </Button>
-        <PostsList posts={postsList} openPostEditor={openPostEditor} />
+        <PostsList posts={posts} openEditor={openEditor} delItem={delItem} />
       </Space>
 
-      {/* <AppFormDrawer isEditorOpen={open} close={closeEditor}>
-        <div></div>
-      </AppFormDrawer> */}
+      <AppFormDrawer
+        title={isNew ? 'Добавление нового Поста' : 'Редактирование поста'}
+        isEditorOpen={open}
+        close={closeEditor}
+      >
+        <PostsForm isNew={isNew} />
+      </AppFormDrawer>
     </ErrorBoundary>
   )
 }

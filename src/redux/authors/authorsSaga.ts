@@ -13,6 +13,26 @@ import { AuthorsActions } from './authorsActions'
 import { FormError, ResponseError } from '../../models/Errors'
 import { AuthorsConstants } from './authorsConstants'
 
+function* getAllAuthors() {
+  try {
+    const authors: AxiosResponse<Author[]> = yield call(
+      AuthorsService.getAllAuthors
+    )
+    yield put(AuthorsActions.setAuthors(authors.data))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(
+        AuthorsActions.setResponseError({
+          name: error.name,
+          code: 0,
+          message: 'Неизвестная ошибка',
+          type: error.message,
+        } as ResponseError)
+      )
+    }
+  }
+}
+
 function* getAuthors() {
   const pathname: string = yield select(
     (state: RootState) => state.router.location.pathname
@@ -22,23 +42,7 @@ function* getAuthors() {
   )
 
   if (pathname === '/authors') {
-    try {
-      const authors: AxiosResponse<Author[]> = yield call(
-        AuthorsService.getAllAuthors
-      )
-      yield put(AuthorsActions.setAuthors(authors.data))
-    } catch (error) {
-      if (error instanceof Error) {
-        yield put(
-          AuthorsActions.setResponseError({
-            name: error.name,
-            code: 0,
-            message: 'Неизвестная ошибка',
-            type: error.message,
-          } as ResponseError)
-        )
-      }
-    }
+    yield getAllAuthors()
   }
 }
 
@@ -159,4 +163,5 @@ export function* authorsWather() {
   yield takeEvery(AuthorsConstants.ADD_AUTHOR, addNewAuthor)
   yield takeEvery(AuthorsConstants.EDIT_AUTHOR, updateAuthor)
   yield takeEvery(AuthorsConstants.DEL_AUTHOR, delAuthor)
+  yield takeEvery(AuthorsConstants.GET_AUTHORS, getAllAuthors)
 }

@@ -1,12 +1,15 @@
+import { FormError, ResponseError } from '../../models/Errors'
 import { Post, PostDetails } from '../../models/Post'
 import { AppPostActions } from './postsActions'
-import { PostsConstants } from './postsConstants'
+import { PostsConstants } from './PostsConstants'
 
 const initialState = {
-  postsList: [] as Post[],
-  currentPostDetail: {} as PostDetails,
-  isPostSaving: false,
-  savingErrors: '',
+  posts: [] as Post[],
+  currentPost: {} as PostDetails,
+  responseErrors: {} as ResponseError,
+  formErrors: [] as FormError[],
+  isDataFetching: false,
+  successMessage: '',
 }
 
 type PostsState = typeof initialState
@@ -17,13 +20,17 @@ export const postsReducer = (
 ): PostsState => {
   switch (action.type) {
     case PostsConstants.SET_POSTS:
-      return { ...state, postsList: action.payload }
-    case PostsConstants.SET_CURRENT_POST_DATA:
-      return { ...state, currentPostDetail: action.payload }
-    // case PostsConstants.IS_POST_SAVING:
-    //   return { ...state, isPostSaving: action.payload }
-    // case PostsConstants.SET_SAVING_ERRORS:
-    //   return { ...state, savingErrors: action.payload }
+      return { ...state, posts: action.payload }
+    case PostsConstants.SET_CURRENT_POST:
+      return { ...state, currentPost: action.payload }
+    case PostsConstants.SET_SUCCESS_MESSAGE:
+      return { ...state, successMessage: action.payload }
+
+    case PostsConstants.SET_RESPONSE_ERROR:
+      return { ...state, responseErrors: action.payload }
+
+    case PostsConstants.SET_FORM_ERROR:
+      return { ...state, formErrors: action.payload }
     default:
       return state
   }

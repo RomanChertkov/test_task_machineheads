@@ -1,3 +1,5 @@
+import { UploadFile } from 'antd'
+import { Author } from './Author'
 import { Avatar } from './Avatar'
 import { Tag } from './Tag'
 
@@ -21,16 +23,14 @@ export interface PostDetails extends PostBasic {
   tags: PostTag[]
 }
 
-interface PreviewPicture {
-  id: number
-  name: string
-  url: string
-}
+interface PreviewPicture extends Avatar {}
+type PostAuthor = { fullName: string } & Pick<Author, 'id' | 'avatar'>
+export type PostTag = Pick<Tag, 'id' | 'name' | 'code'>
 
-interface PostAuthor {
-  id: number
-  fullName: string
-  avatar: Avatar
-}
+export type EditPost = {
+  authorId: number
+  tagIds: number[]
+  previewPicture: UploadFile | File | undefined
+} & Pick<PostDetails, 'code' | 'title' | 'text' | 'id'>
 
-type PostTag = Pick<Tag, 'id' | 'name' | 'code'>
+export type NewPost = Omit<EditPost, 'id'>

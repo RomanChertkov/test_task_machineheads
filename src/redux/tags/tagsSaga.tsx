@@ -8,29 +8,33 @@ import { LOCATION_CHANGE } from 'connected-react-router'
 import { TagsConstants } from './TagsConstants'
 import { FormError, ResponseError } from '../../models/Errors'
 
+function* getAllTags() {
+  try {
+    const tagsListResponse: AxiosResponse<Tag[]> = yield call(
+      TagsService.getAllTags
+    )
+    yield put(TagsActions.setTags(tagsListResponse.data))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(
+        TagsActions.setResponseError({
+          name: error.name,
+          code: 0,
+          message: 'Неизвестная ошибка',
+          type: error.message,
+        } as ResponseError)
+      )
+    }
+  }
+}
+
 function* getTags() {
   const pathname: string = yield select(
     (state: RootState) => state.router.location.pathname
   )
 
   if (pathname === '/tags') {
-    try {
-      const tagsListResponse: AxiosResponse<Tag[]> = yield call(
-        TagsService.getAllTags
-      )
-      yield put(TagsActions.setTags(tagsListResponse.data))
-    } catch (error) {
-      if (error instanceof Error) {
-        yield put(
-          TagsActions.setResponseError({
-            name: error.name,
-            code: 0,
-            message: 'Неизвестная ошибка',
-            type: error.message,
-          } as ResponseError)
-        )
-      }
-    }
+    yield getAllTags()
   }
 }
 
@@ -147,4 +151,5 @@ export function* tagsWather() {
   yield takeEvery(TagsConstants.ADD_TAG, AddNewTag)
   yield takeEvery(TagsConstants.EDIT_TAG, updateTag)
   yield takeEvery(TagsConstants.DEL_TAG, delTag)
+  yield takeEvery(TagsConstants.GET_TAGS, getAllTags)
 }

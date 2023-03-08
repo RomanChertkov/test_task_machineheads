@@ -1,6 +1,7 @@
 const prefix = 'tags/'
 export enum TagsConstants {
   SET_TAGS = prefix + 'SET_TAGS',
+  GET_TAGS = prefix + 'GET_TAGS',
   GET_TAG_DETAILS = prefix + 'GET_TAG_DETAILS',
   SET_CURRENT_TAG = prefix + 'SET_CURRENT_TAG',
   EDIT_TAG = prefix + 'EDIT_TAG',

@@ -11,6 +11,10 @@ export const TagsActions = {
       type: TagsConstants.SET_TAGS,
       payload: tags,
     } as const),
+  getTags: () =>
+    ({
+      type: TagsConstants.GET_TAGS,
+    } as const),
 
   getTagDetails: (tagId: number) =>
     ({

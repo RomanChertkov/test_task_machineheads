@@ -26,9 +26,9 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
 
   const author = useAppSelector((state) => state.authors.currentAuthor)
   const formErrors = useAppSelector((state) => state.tags.formErrors)
-  //useState file from onChange
 
   const [tempfile, setTempFile] = useState<UploadFile | File | any>()
+
   const onFinish = (values: NewAuthor) => {
     isNew
       ? dispatch(
@@ -93,6 +93,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             )}
           </Dragger>
         </Col>
+
         <Col span={8}>
           {author.avatar && (
             <Image
@@ -129,6 +130,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             <Input size="large" placeholder="Введите имя автора " />
           </Form.Item>
         </Col>
+
         <Col span={8}>
           <Form.Item
             validateStatus={
@@ -138,8 +140,6 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             }
             help={
               formErrors.find((item) => item.field === 'secondName')?.message
-              //   &&
-              //   'Необходимо заполнить «Символьный код».'
             }
             name="secondName"
             label="Отчество"
@@ -154,6 +154,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             <Input size="large" placeholder="Введите  отчество автора" />
           </Form.Item>
         </Col>
+
         <Col span={8}>
           <Form.Item
             validateStatus={
@@ -161,11 +162,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
                 ? 'error'
                 : 'success'
             }
-            help={
-              formErrors.find((item) => item.field === 'lastName')?.message
-              //   &&
-              //   'Необходимо заполнить «Символьный код».'
-            }
+            help={formErrors.find((item) => item.field === 'lastName')?.message}
             name="lastName"
             label="Фамилия"
             rules={[
@@ -214,6 +211,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row gutter={16}>
         <Col span={24}>
           <Form.Item name="removeAvatar" valuePropName="checked">
@@ -221,6 +219,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row gutter={16}>
         <Col span={24}>
           <Button size="large" type="primary" htmlType="submit">
