@@ -145,11 +145,36 @@ function* delTag(action: actionWithPayload<number>) {
   }
 }
 
+function* delMarkedTags(action: actionWithPayload<number[]>) {
+  try {
+    yield call(TagsService.multipleRemoveTags, action.payload)
+    yield put(TagsActions.setSuccessMessage('Элемент удалён.'))
+    yield getTags()
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400 || error.response?.status === 404)
+        yield put(
+          TagsActions.setResponseError(error.response.data as ResponseError)
+        )
+    } else if (error instanceof Error) {
+      yield put(
+        TagsActions.setResponseError({
+          name: error.name,
+          code: 0,
+          message: 'Неизвестная ошибка',
+          type: error.message,
+        } as ResponseError)
+      )
+    }
+  }
+}
+
 export function* tagsWather() {
   yield takeLatest(LOCATION_CHANGE, getTags)
   yield takeEvery(TagsConstants.GET_TAG_DETAILS, getTagDetails)
   yield takeEvery(TagsConstants.ADD_TAG, AddNewTag)
   yield takeEvery(TagsConstants.EDIT_TAG, updateTag)
   yield takeEvery(TagsConstants.DEL_TAG, delTag)
+  yield takeEvery(TagsConstants.MULTIPLE_TAGS_DEL, delMarkedTags)
   yield takeEvery(TagsConstants.GET_TAGS, getAllTags)
 }

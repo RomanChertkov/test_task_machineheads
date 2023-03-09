@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 import { Typography, Space, Button, notification } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import TagsList from '../components/TagsList'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import AppFormDrawer from '../components/AppFormDrawer'
@@ -9,6 +9,7 @@ import TagsForm from '../components/TagsForm'
 import { Tag } from '../models/Tag'
 import { FormError, ResponseError } from '../models/Errors'
 import ErrorBoundary from '../components/ErrorBoundary'
+import { CheckboxChangeEvent } from 'antd/es/checkbox'
 
 const { Title } = Typography
 interface TagsPageProps {}
@@ -17,11 +18,14 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
   const dispatch = useAppDispatch()
 
   const tagsList = useAppSelector((state) => state.tags.tags)
-  const currentTag = useAppSelector((state) => state.tags.currentTag)
+  // const currentTag = useAppSelector((state) => state.tags.currentTag)
   const responseError = useAppSelector((state) => state.tags.responseErrors)
   const successAction = useAppSelector((state) => state.tags.successMessage)
+
   const [open, setOpen] = useState(false)
   const [isNew, setIsNew] = useState(false)
+
+  const [multiplyDelList, setMultiplyDelList] = useState<number[]>([])
 
   const [api, contextHolder] = notification.useNotification()
   useEffect(() => {
@@ -46,6 +50,19 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
 
   function delItem(tagId: number) {
     dispatch(TagsActions.deleteTag(tagId))
+  }
+
+  function multipleDel(checked: boolean, tagId: number) {
+    console.log(checked)
+    if (checked) setMultiplyDelList([...multiplyDelList, tagId])
+    else {
+      setMultiplyDelList(multiplyDelList.filter((item) => item !== tagId))
+    }
+  }
+
+  function deleteMarkedItems() {
+    console.log(multiplyDelList)
+    dispatch(TagsActions.multipleDeleteTags(multiplyDelList))
   }
 
   function openEmptyEditor() {
@@ -73,15 +90,22 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
       <Title>Теги</Title>
 
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Button size="large" type="primary" onClick={openEmptyEditor}>
-          {/* <CloudUploadOutlined /> */}
-          <PlusOutlined />
-          Добавить новый тег
-        </Button>
+        <Space size={'large'}>
+          <Button size="large" type="primary" onClick={openEmptyEditor}>
+            <PlusOutlined />
+            Добавить новый тег
+          </Button>
+          <Button size="large" type="primary" onClick={deleteMarkedItems}>
+            <DeleteOutlined />
+            Удалить выбранные теги
+          </Button>
+        </Space>
+
         <TagsList
           tagsList={tagsList}
           openEditor={openEditor}
           delItem={delItem}
+          multipleDel={multipleDel}
         />
       </Space>
 

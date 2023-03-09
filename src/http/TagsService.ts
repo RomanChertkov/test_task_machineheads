@@ -80,11 +80,11 @@ export class TagsService {
     }
   }
 
-  //   static async multipleremoveAuthors(ids: number[]) {
-  //     try {
-  //       return await api.delete('/manage/authors/multiple-remove', {
-  //         params: { id: ids },
-  //       })
-  //     } catch (error) {}
-  //   }
+  static async multipleRemoveTags(ids: number[]) {
+    try {
+      return await api.delete('/manage/tags/multiple-remove', {
+        params: { id: ids },
+      })
+    } catch (error) {}
+  }
 }

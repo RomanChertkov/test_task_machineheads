@@ -46,6 +46,12 @@ export const TagsActions = {
       payload: tagId,
     } as const),
 
+  multipleDeleteTags: (tagIds: number[]) =>
+    ({
+      type: TagsConstants.MULTIPLE_TAGS_DEL,
+      payload: tagIds,
+    } as const),
+
   setSuccessMessage: (message: string) =>
     ({
       type: TagsConstants.SET_SUCCESS_MESSAGE,

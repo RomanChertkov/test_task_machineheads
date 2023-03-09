@@ -7,6 +7,7 @@ export enum TagsConstants {
   EDIT_TAG = prefix + 'EDIT_TAG',
   ADD_TAG = prefix + 'ADD_TAG',
   DEL_TAG = prefix + 'DEL_TAG',
+  MULTIPLE_TAGS_DEL = prefix + 'MULTIPLE_TAGS_DEL',
   SET_RESPONSE_ERROR = prefix + 'SET_RESPONSE_ERROR',
   SET_FORM_ERROR = prefix + 'SET_FORM_ERROR',
   SET_SUCCESS_MESSAGE = prefix + 'SET_SUCCESS_MESSAGE',
