@@ -10,14 +10,12 @@ import {
   Select,
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { AuthorsActions } from '../redux/authors/authorsActions'
 import { TagsActions } from '../redux/tags/tagsActions'
-import { NewPost, PostTag } from '../models/Post'
+import { NewPost, NewPostFromForm, PostTag } from '../models/Post'
 import { postsActions } from '../redux/posts/postsActions'
-import { memo } from 'react'
-import FormItem from './FormItem'
 
 const { Dragger } = Upload
 const { Option } = Select
@@ -29,64 +27,48 @@ interface AuthorsFormProps {
 const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
   const dispatch = useAppDispatch()
 
-  const post = useAppSelector((state) => state.posts.currentPost)
+  const {
+    currentPost: post,
+    formErrors,
+    isSaving,
+  } = useAppSelector((state) => state.posts)
   const allTags = useAppSelector((state) => state.tags.tags)
   const allAuthors = useAppSelector((state) => state.authors.authors)
-  const formErrors = useAppSelector((state) => state.posts.formErrors)
 
-  const [tempfile, setTempFile] = useState<UploadFile | File | any>()
-
-  function getTagIdsByName(tagsValues: string[]) {
-    return tagsValues.map(
-      (item) => allTags.find((fItem) => item === fItem.name)?.id || 0
-    )
-  }
-  function getAuthorIdByName(authorName: string) {
-    return (
-      allAuthors.find(
-        (item) =>
-          `${item.lastName} ${item.name} ${item.secondName}` === authorName
-      )?.id || 0
-    )
-  }
-
-  const onFinish = (
-    values: { tagIds: string[]; authorId: string } & Omit<
-      NewPost,
-      'tagIds' | 'authorId'
-    >
-  ) => {
-    const data: NewPost = {
-      ...values,
-      authorId: getAuthorIdByName(values.authorId),
-      tagIds: getTagIdsByName(values.tagIds),
-      previewPicture: tempfile?.originFileObj as File,
+  useEffect(() => {
+    if (allTags.length === 0) {
+      dispatch(TagsActions.getTags())
     }
+    if (allAuthors.length === 0) {
+      dispatch(AuthorsActions.getAuthors())
+    }
+  }, [dispatch])
+
+  const onFinish = (values: NewPostFromForm) => {
     isNew
-      ? dispatch(postsActions.addPost(data))
+      ? dispatch(postsActions.addPost(values))
       : dispatch(
           postsActions.editPost({
-            ...data,
+            ...values,
             id: post.id,
           })
         )
-    console.log('Success:', data, new Date().toISOString())
+    //console.log('Success:', values, new Date().toISOString())
   }
 
-  function getAllTags() {
-    console.log('getTags')
+  // function getAllTags() {
+  //   console.log('getTags')
 
-    allTags.length === 0 && dispatch(TagsActions.getTags())
-  }
+  //   allTags.length === 0 && dispatch(TagsActions.getTags())
+  // }
 
-  function getAllAuthors() {
-    console.log('getAuthors')
+  // function getAllAuthors() {
+  //   console.log('getAuthors')
 
-    allAuthors.length === 0 && dispatch(AuthorsActions.getAuthors())
-  }
+  //   allAuthors.length === 0 && dispatch(AuthorsActions.getAuthors())
+  // }
 
   const normFile = (e: any) => {
-    console.log('Upload event:', e)
     if (Array.isArray(e)) {
       return e
     }
@@ -95,6 +77,7 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
 
   return (
     <Form
+      disabled={isSaving}
       layout="vertical"
       onFinish={onFinish}
       fields={[
@@ -106,7 +89,7 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
         // { name: ['previewPicture'], value: post.previewPicture?.url },
       ]}
     >
-      <Row gutter={16} style={{ marginBottom: '3rem' }}>
+      <Row gutter={16}>
         <Col span={16}>
           <Form.Item
             name="previewPicture"
@@ -124,7 +107,7 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             }
             rules={[
               {
-                required: true,
+                required: isNew ? true : false,
                 message: 'загрузите изображение',
               },
             ]}
@@ -133,8 +116,8 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
               name="dragger"
               accept="image/*"
               multiple={false}
-              onChange={({ file }) => setTempFile(file)}
-              onDrop={({ dataTransfer }) => setTempFile(dataTransfer.files[0])}
+              // onChange={({ file }) => setTempFile(file)}
+              // onDrop={({ dataTransfer }) => setTempFile(dataTransfer.files[0])}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
@@ -224,13 +207,19 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
+            validateStatus={
+              formErrors.find((item) => item.field === 'authorId')
+                ? 'error'
+                : 'success'
+            }
+            help={formErrors.find((item) => item.field === 'authorId')?.message}
             name="authorId"
             label="Автор поста"
             rules={[{ required: true, message: 'Please choose the approver' }]}
           >
             <Select
               allowClear
-              onDropdownVisibleChange={getAllAuthors}
+              // onDropdownVisibleChange={getAllAuthors}
               placeholder="Выберите автора поста"
             >
               {allAuthors.map((item, index) => (
@@ -247,6 +236,12 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
 
         <Col span={12}>
           <Form.Item
+            validateStatus={
+              formErrors.find((item) => item.field === 'tagIds')
+                ? 'error'
+                : 'success'
+            }
+            help={formErrors.find((item) => item.field === 'tagIds')?.message}
             name="tagIds"
             label="Теги поста"
             rules={[
@@ -259,7 +254,7 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
             <Select
               mode="tags"
               placeholder="Tags Mode"
-              onDropdownVisibleChange={getAllTags}
+              //onDropdownVisibleChange={getAllTags}
               //onChange={(value, option) => transformTagsInfoAndSet(option)}
               options={allTags.map((item) => ({
                 value: item.name,
@@ -272,7 +267,12 @@ const PostsForm: FC<AuthorsFormProps> = ({ isNew }) => {
 
       <Row gutter={16}>
         <Col span={24}>
-          <Button size="large" type="primary" htmlType="submit">
+          <Button
+            size="large"
+            type="primary"
+            htmlType="submit"
+            loading={isSaving}
+          >
             Сохранить
           </Button>
         </Col>

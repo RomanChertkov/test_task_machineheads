@@ -23,14 +23,19 @@ export interface PostDetails extends PostBasic {
   tags: PostTag[]
 }
 
-interface PreviewPicture extends Avatar {}
+export interface PreviewPicture extends Avatar {}
 type PostAuthor = { fullName: string } & Pick<Author, 'id' | 'avatar'>
 export type PostTag = Pick<Tag, 'id' | 'name' | 'code'>
 
 export type EditPost = {
   authorId: number
   tagIds: number[]
-  previewPicture: UploadFile | File | undefined
+  previewPicture: File | undefined
 } & Pick<PostDetails, 'code' | 'title' | 'text' | 'id'>
 
 export type NewPost = Omit<EditPost, 'id'>
+export type NewPostFromForm = {
+  tagIds: string[]
+  authorId: string
+  previewPicture: UploadFile[] | undefined
+} & Omit<NewPost, 'tagIds' | 'authorId' | 'previewPicture'>

@@ -1,5 +1,11 @@
 import { InferActionsType } from '../store'
-import { EditPost, NewPost, Post, PostDetails } from '../../models/Post'
+import {
+  EditPost,
+  NewPost,
+  NewPostFromForm,
+  Post,
+  PostDetails,
+} from '../../models/Post'
 import { PostsConstants } from './PostsConstants'
 import { FormError, ResponseError } from '../../models/Errors'
 
@@ -30,13 +36,13 @@ export const postsActions = {
       payload: postId,
     } as const),
 
-  addPost: (newPost: NewPost) =>
+  addPost: (newPost: NewPostFromForm) =>
     ({
       type: PostsConstants.ADD_POST,
       payload: newPost,
     } as const),
 
-  editPost: (editPost: EditPost) =>
+  editPost: (editPost: NewPostFromForm & { id: number }) =>
     ({
       type: PostsConstants.EDIT_POST,
       payload: editPost,
@@ -64,5 +70,17 @@ export const postsActions = {
     ({
       type: PostsConstants.SET_FORM_ERROR,
       payload: formErrors,
+    } as const),
+
+  setIsDeletingPost: (postId: number) =>
+    ({
+      type: PostsConstants.SET_IS_DELETING_POST,
+      payload: postId,
+    } as const),
+
+  setIsSavingPost: (flag: boolean) =>
+    ({
+      type: PostsConstants.SET_IS_SAVING_POST,
+      payload: flag,
     } as const),
 }

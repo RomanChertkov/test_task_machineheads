@@ -10,6 +10,8 @@ const initialState = {
   formErrors: [] as FormError[],
   isDataFetching: false,
   successMessage: '',
+  deletingPostId: 0,
+  isSaving: false,
 }
 
 type PostsState = typeof initialState
@@ -21,8 +23,10 @@ export const postsReducer = (
   switch (action.type) {
     case PostsConstants.SET_POSTS:
       return { ...state, posts: action.payload }
+
     case PostsConstants.SET_CURRENT_POST:
       return { ...state, currentPost: action.payload }
+
     case PostsConstants.SET_SUCCESS_MESSAGE:
       return { ...state, successMessage: action.payload }
 
@@ -31,6 +35,12 @@ export const postsReducer = (
 
     case PostsConstants.SET_FORM_ERROR:
       return { ...state, formErrors: action.payload }
+
+    case PostsConstants.SET_IS_DELETING_POST:
+      return { ...state, deletingPostId: action.payload }
+
+    case PostsConstants.SET_IS_SAVING_POST:
+      return { ...state, isSaving: action.payload }
     default:
       return state
   }

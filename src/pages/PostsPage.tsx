@@ -14,9 +14,8 @@ const { Title } = Typography
 
 export default function HomePage() {
   const dispatch = useAppDispatch()
-  const { posts, responseErrors, successMessage } = useAppSelector(
-    (state) => state.posts
-  )
+  const { posts, responseErrors, successMessage, deletingPostId } =
+    useAppSelector((state) => state.posts)
 
   const [open, setOpen] = useState(false)
   const [isNew, setIsNew] = useState(false)
@@ -74,7 +73,13 @@ export default function HomePage() {
           <PlusOutlined />
           Добавить новый пост
         </Button>
-        <PostsList posts={posts} openEditor={openEditor} delItem={delItem} />
+
+        <PostsList
+          posts={posts}
+          openEditor={openEditor}
+          delItem={delItem}
+          deletingPostId={deletingPostId}
+        />
       </Space>
 
       <AppFormDrawer

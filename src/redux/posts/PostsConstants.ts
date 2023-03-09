@@ -13,4 +13,7 @@ export enum PostsConstants {
   SET_SUCCESS_MESSAGE = prefix + 'SET_SUCCESS_MESSAGE',
 
   SET_IS_POSTS_FETCHING = prefix + 'SET_IS_DATA_FETCHING',
+
+  SET_IS_DELETING_POST = prefix + 'SET_IS_DELETING_POST',
+  SET_IS_SAVING_POST = prefix + 'SET_IS_SAVING_POST',
 }
