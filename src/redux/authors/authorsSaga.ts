@@ -80,11 +80,15 @@ function* addNewAuthor({ payload }: actionWithPayload<NewAuthorFromForm>) {
     avatar: payload.avatar && payload.avatar[0].originFileObj,
   }
   try {
+    yield put(AuthorsActions.setIsSavingAuthor(true))
+
     yield call(AuthorsService.addAuthor, data)
 
     yield put(AuthorsActions.setSuccessMessage('Элемент добавлен.'))
 
     yield getAllAuthors()
+
+    yield put(AuthorsActions.setIsSavingAuthor(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400)
@@ -105,6 +109,8 @@ function* addNewAuthor({ payload }: actionWithPayload<NewAuthorFromForm>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(AuthorsActions.setIsSavingAuthor(false))
   }
 }
 
@@ -145,6 +151,8 @@ function* updateAuthor({
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(AuthorsActions.setIsSavingAuthor(false))
   }
 }
 
@@ -175,6 +183,8 @@ function* delAuthor(action: actionWithPayload<number>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(AuthorsActions.setIsDeletingAuthor(0))
   }
 }
 
@@ -205,6 +215,8 @@ function* delMarkedAuthors(action: actionWithPayload<number[]>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(AuthorsActions.setIsMultiDeletingAuthor(false))
   }
 }
 

@@ -96,6 +96,7 @@ function* AddNewTag(action: actionWithPayload<NewTag>) {
       )
     }
   }
+  yield put(TagsActions.setIsSavingTag(false))
 }
 
 function* updateTag(action: actionWithPayload<EditTag>) {
@@ -127,6 +128,8 @@ function* updateTag(action: actionWithPayload<EditTag>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(TagsActions.setIsSavingTag(false))
   }
 }
 
@@ -157,6 +160,8 @@ function* delTag(action: actionWithPayload<number>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(TagsActions.setIsDeletingTag(0))
   }
 }
 
@@ -187,6 +192,8 @@ function* delMarkedTags(action: actionWithPayload<number[]>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(TagsActions.setIsMultiDeletingTag(false))
   }
 }
 

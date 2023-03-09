@@ -120,6 +120,8 @@ function* addNewPost({ payload }: actionWithPayload<NewPostFromForm>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(postsActions.setIsSavingPost(false))
   }
 }
 
@@ -169,6 +171,8 @@ function* updatePost({
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(postsActions.setIsSavingPost(false))
   }
 }
 
@@ -199,6 +203,8 @@ function* delPost({ payload }: actionWithPayload<number>) {
         } as ResponseError)
       )
     }
+  } finally {
+    yield put(postsActions.setIsDeletingPost(0))
   }
 }
 
