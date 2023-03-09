@@ -17,9 +17,13 @@ interface AuthorsPageProps {}
 const AuthorsPage: FC<AuthorsPageProps> = ({}) => {
   const dispatch = useAppDispatch()
 
-  const authorsList = useAppSelector((state) => state.authors.authors)
-  const responseError = useAppSelector((state) => state.authors.responseErrors)
-  const successAction = useAppSelector((state) => state.authors.successMessage)
+  const {
+    authors: authorsList,
+    responseErrors,
+    successMessage,
+    isMultiDeteting,
+    deletingAuthorId,
+  } = useAppSelector((state) => state.authors)
 
   const [open, setOpen] = useState(false)
   const [isNew, setIsNew] = useState(false)
@@ -28,19 +32,19 @@ const AuthorsPage: FC<AuthorsPageProps> = ({}) => {
 
   const [api, contextHolder] = notification.useNotification()
   useEffect(() => {
-    successAction &&
+    successMessage &&
       api.success({
-        message: successAction,
+        message: successMessage,
       })
-  }, [successAction])
+  }, [successMessage])
 
   useEffect(() => {
-    responseError.name &&
+    responseErrors.name &&
       api.error({
-        message: responseError.name,
-        description: responseError.message,
+        message: responseErrors.name,
+        description: responseErrors.message,
       })
-  }, [responseError])
+  }, [responseErrors])
 
   function openEditor(authorId: number) {
     dispatch(AuthorsActions.getAuthorDetails(authorId))
@@ -87,7 +91,12 @@ const AuthorsPage: FC<AuthorsPageProps> = ({}) => {
             <PlusOutlined />
             Добавить нового автора
           </Button>
-          <Button size="large" type="primary" onClick={deleteMarkedItems}>
+          <Button
+            size="large"
+            type="primary"
+            onClick={deleteMarkedItems}
+            loading={isMultiDeteting}
+          >
             <DeleteOutlined />
             Удалить выбранных авторов
           </Button>
@@ -98,6 +107,7 @@ const AuthorsPage: FC<AuthorsPageProps> = ({}) => {
           openEditor={openEditor}
           delItem={delItem}
           changeMultipleDelList={changeMultipleDelList}
+          deletingAuthorId={deletingAuthorId}
         />
       </Space>
 

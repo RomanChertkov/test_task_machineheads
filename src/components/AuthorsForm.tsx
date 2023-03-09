@@ -1,18 +1,8 @@
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Upload,
-  Image,
-  UploadFile,
-  Checkbox,
-} from 'antd'
+import { Button, Col, Form, Input, Row, Upload, Image, Checkbox } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
-import { NewAuthor } from '../models/Author'
+import { NewAuthorFromForm } from '../models/Author'
 import { AuthorsActions } from '../redux/authors/authorsActions'
 
 const { Dragger } = Upload
@@ -24,41 +14,38 @@ interface AuthorsFormProps {
 const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
   const dispatch = useAppDispatch()
 
-  const author = useAppSelector((state) => state.authors.currentAuthor)
-  const formErrors = useAppSelector((state) => state.tags.formErrors)
+  const {
+    currentAuthor: author,
+    formErrors,
+    isSaving,
+  } = useAppSelector((state) => state.authors)
 
-  const [tempfile, setTempFile] = useState<UploadFile | File | any>()
-
-  const onFinish = (values: NewAuthor) => {
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e
+    }
+    return e?.fileList
+  }
+  const onFinish = (values: NewAuthorFromForm) => {
     isNew
       ? dispatch(
           AuthorsActions.addAuthor({
             ...values,
             removeAvatar: +Boolean(values.removeAvatar),
-            avatar: tempfile?.originFileObj as File,
           })
         )
       : dispatch(
           AuthorsActions.editAuthor({
             ...values,
             removeAvatar: +Boolean(values.removeAvatar),
-            avatar: tempfile?.originFileObj as File,
             id: author.id,
           })
         )
-    console.log(
-      'Success:',
-      {
-        ...values,
-        removeAvatar: +Boolean(values.removeAvatar),
-        avatar: tempfile,
-      },
-      new Date().toISOString()
-    )
   }
 
   return (
     <Form
+      disabled={isSaving}
       layout="vertical"
       onFinish={onFinish}
       fields={[
@@ -69,7 +56,7 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
         { name: ['description'], value: author.description },
       ]}
     >
-      <Row gutter={16} style={{ marginBottom: '3rem' }}>
+      {/* <Row gutter={16} style={{ marginBottom: '3rem' }}>
         <Col span={16}>
           <Dragger
             multiple={false}
@@ -92,6 +79,58 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
               </p>
             )}
           </Dragger>
+        </Col>
+
+        <Col span={8}>
+          {author.avatar && (
+            <Image
+              width={200}
+              height={200}
+              src="error"
+              fallback={author.avatar.url}
+            />
+          )}
+        </Col>
+      </Row> */}
+
+      <Row gutter={16}>
+        <Col span={16}>
+          <Form.Item
+            name="avatar"
+            label="Аватар автора"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            validateStatus={
+              formErrors.find((item) => item.field === 'previewPicture')
+                ? 'error'
+                : 'success'
+            }
+            help={
+              formErrors.find((item) => item.field === 'previewPicture')
+                ?.message
+            }
+            rules={[
+              {
+                required: isNew ? true : false,
+                message: 'загрузите изображение',
+              },
+            ]}
+          >
+            <Dragger
+              name="dragger"
+              accept="image/*"
+              multiple={false}
+              // onChange={({ file }) => setTempFile(file)}
+              // onDrop={({ dataTransfer }) => setTempFile(dataTransfer.files[0])}
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Кликните или перетащите файл в эту зону для загрузки
+              </p>
+            </Dragger>
+          </Form.Item>
         </Col>
 
         <Col span={8}>
@@ -222,7 +261,12 @@ const AuthorsForm: FC<AuthorsFormProps> = ({ isNew }) => {
 
       <Row gutter={16}>
         <Col span={24}>
-          <Button size="large" type="primary" htmlType="submit">
+          <Button
+            size="large"
+            type="primary"
+            htmlType="submit"
+            loading={isSaving}
+          >
             Сохранить
           </Button>
         </Col>

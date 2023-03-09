@@ -9,6 +9,7 @@ interface AuthorListProps {
   openEditor: (itemId: number) => void
   delItem: (itemId: number) => void
   changeMultipleDelList: (checked: boolean, itemId: number) => void
+  deletingAuthorId: number
 }
 
 const AuthorsList: FC<AuthorListProps> = ({
@@ -16,6 +17,7 @@ const AuthorsList: FC<AuthorListProps> = ({
   openEditor,
   delItem,
   changeMultipleDelList,
+  deletingAuthorId,
 }) => {
   return (
     <>
@@ -37,7 +39,12 @@ const AuthorsList: FC<AuthorListProps> = ({
                 <EditOutlined />
                 Редактировать
               </Button>,
-              <Button type="primary" danger onClick={() => delItem(item.id)}>
+              <Button
+                type="primary"
+                danger
+                onClick={() => delItem(item.id)}
+                loading={item.id === deletingAuthorId}
+              >
                 <DeleteOutlined /> Удалить
               </Button>,
             ]}

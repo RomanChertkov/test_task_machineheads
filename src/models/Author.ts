@@ -17,7 +17,12 @@ export interface AuthorDetails extends Author {
 }
 
 export type EditAuthor = {
-  avatar: UploadFile | File | undefined
+  avatar: File | undefined
   removeAvatar: number
 } & Omit<AuthorDetails, 'updatedAt' | 'createdAt' | 'avatar'>
+
 export type NewAuthor = Omit<EditAuthor, 'id'>
+
+export type NewAuthorFromForm = {
+  avatar: UploadFile[] | undefined
+} & Omit<NewAuthor, 'avatar'>

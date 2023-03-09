@@ -8,6 +8,7 @@ import {
   AuthorDetails,
   EditAuthor,
   NewAuthor,
+  NewAuthorFromForm,
 } from '../../models/Author'
 import { AuthorsActions } from './authorsActions'
 import { FormError, ResponseError } from '../../models/Errors'
@@ -37,11 +38,11 @@ function* getAuthors() {
   const pathname: string = yield select(
     (state: RootState) => state.router.location.pathname
   )
-  const authorsInStore: Author[] = yield select(
+  const authors: Author[] = yield select(
     (state: RootState) => state.authors.authors
   )
 
-  if (pathname === '/authors') {
+  if (pathname === '/authors' && authors.length === 0) {
     yield getAllAuthors()
   }
 }
@@ -73,13 +74,17 @@ function* getAuthorDetails({ payload }: actionWithPayload<number>) {
   }
 }
 
-function* addNewAuthor(action: actionWithPayload<NewAuthor>) {
+function* addNewAuthor({ payload }: actionWithPayload<NewAuthorFromForm>) {
+  const data: NewAuthor = {
+    ...payload,
+    avatar: payload.avatar && payload.avatar[0].originFileObj,
+  }
   try {
-    yield call(AuthorsService.addAuthor, action.payload)
+    yield call(AuthorsService.addAuthor, data)
 
     yield put(AuthorsActions.setSuccessMessage('Элемент добавлен.'))
 
-    yield getAuthors()
+    yield getAllAuthors()
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400)
@@ -103,13 +108,23 @@ function* addNewAuthor(action: actionWithPayload<NewAuthor>) {
   }
 }
 
-function* updateAuthor(action: actionWithPayload<EditAuthor>) {
+function* updateAuthor({
+  payload,
+}: actionWithPayload<NewAuthorFromForm & { id: number }>) {
+  const data: EditAuthor = {
+    ...payload,
+    avatar: payload.avatar && payload.avatar[0].originFileObj,
+  }
   try {
-    yield call(AuthorsService.editAuthor, action.payload)
+    yield put(AuthorsActions.setIsSavingAuthor(true))
+
+    yield call(AuthorsService.editAuthor, data)
 
     yield put(AuthorsActions.setSuccessMessage('Элемент обновлён.'))
 
-    yield getAuthors()
+    yield getAllAuthors()
+
+    yield put(AuthorsActions.setIsSavingAuthor(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)
@@ -135,9 +150,15 @@ function* updateAuthor(action: actionWithPayload<EditAuthor>) {
 
 function* delAuthor(action: actionWithPayload<number>) {
   try {
+    yield put(AuthorsActions.setIsDeletingAuthor(action.payload))
+
     yield call(AuthorsService.removeAuthor, action.payload)
+
     yield put(AuthorsActions.setSuccessMessage('Элемент удалён.'))
-    yield getAuthors()
+
+    yield getAllAuthors()
+
+    yield put(AuthorsActions.setIsDeletingAuthor(0))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)
@@ -159,9 +180,15 @@ function* delAuthor(action: actionWithPayload<number>) {
 
 function* delMarkedAuthors(action: actionWithPayload<number[]>) {
   try {
+    yield put(AuthorsActions.setIsMultiDeletingAuthor(true))
+
     yield call(AuthorsService.multipleremoveAuthors, action.payload)
+
     yield put(AuthorsActions.setSuccessMessage('Элементы удалёны.'))
-    yield getAuthors()
+
+    yield getAllAuthors()
+
+    yield put(AuthorsActions.setIsMultiDeletingAuthor(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)

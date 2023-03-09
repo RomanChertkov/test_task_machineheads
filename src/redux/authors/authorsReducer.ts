@@ -12,6 +12,9 @@ const initialState = {
   formErrors: [] as FormError[],
   isDataFetching: false,
   successMessage: '',
+  deletingAuthorId: 0,
+  isMultiDeteting: false,
+  isSaving: false,
 }
 
 export const authorsReducer = (
@@ -21,6 +24,7 @@ export const authorsReducer = (
   switch (action.type) {
     case AuthorsConstants.SET_AUTHORS:
       return { ...state, authors: action.payload }
+
     case AuthorsConstants.SET_CURRENT_AUTHOR:
       return { ...state, currentAuthor: action.payload }
 
@@ -32,6 +36,16 @@ export const authorsReducer = (
 
     case AuthorsConstants.SET_FORM_ERROR:
       return { ...state, formErrors: action.payload }
+
+    case AuthorsConstants.SET_IS_DELETING_AUTHOR:
+      return { ...state, deletingAuthorId: action.payload }
+
+    case AuthorsConstants.SET_IS_MULTI_DELETING_AUTHOR:
+      return { ...state, isMultiDeteting: action.payload }
+
+    case AuthorsConstants.SET_IS_SAVING_AUTHOR:
+      return { ...state, isSaving: action.payload }
+
     default:
       return state
   }

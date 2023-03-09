@@ -3,6 +3,7 @@ import {
   AuthorDetails,
   EditAuthor,
   NewAuthor,
+  NewAuthorFromForm,
 } from '../../models/Author'
 import { FormError, ResponseError } from '../../models/Errors'
 import { InferActionsType } from '../store'
@@ -34,13 +35,13 @@ export const AuthorsActions = {
       payload: currentAuthor,
     } as const),
 
-  addAuthor: (newAuthor: NewAuthor) =>
+  addAuthor: (newAuthor: NewAuthorFromForm) =>
     ({
       type: AuthorsConstants.ADD_AUTHOR,
       payload: newAuthor,
     } as const),
 
-  editAuthor: (editAuthor: EditAuthor) =>
+  editAuthor: (editAuthor: NewAuthorFromForm & { id: number }) =>
     ({
       type: AuthorsConstants.EDIT_AUTHOR,
       payload: editAuthor,
@@ -56,6 +57,7 @@ export const AuthorsActions = {
       type: AuthorsConstants.MULTIPLE_DEL_AUTHORS,
       payload: AuthorsIds,
     } as const),
+
   setSuccessMessage: (message: string) =>
     ({
       type: AuthorsConstants.SET_SUCCESS_MESSAGE,
@@ -72,5 +74,23 @@ export const AuthorsActions = {
     ({
       type: AuthorsConstants.SET_FORM_ERROR,
       payload: formErrors,
+    } as const),
+
+  setIsDeletingAuthor: (AuthorId: number) =>
+    ({
+      type: AuthorsConstants.SET_IS_DELETING_AUTHOR,
+      payload: AuthorId,
+    } as const),
+
+  setIsMultiDeletingAuthor: (flag: boolean) =>
+    ({
+      type: AuthorsConstants.SET_IS_MULTI_DELETING_AUTHOR,
+      payload: flag,
+    } as const),
+
+  setIsSavingAuthor: (flag: boolean) =>
+    ({
+      type: AuthorsConstants.SET_IS_SAVING_AUTHOR,
+      payload: flag,
     } as const),
 }
