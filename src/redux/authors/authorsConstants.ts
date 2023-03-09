@@ -9,6 +9,7 @@ export enum AuthorsConstants {
   EDIT_AUTHOR = prefix + 'EDIT_AUTHOR',
   ADD_AUTHOR = prefix + 'ADD_AUTHOR',
   DEL_AUTHOR = prefix + 'DEL_AUTHOR',
+  MULTIPLE_DEL_AUTHORS = prefix + 'MULTIPLE_DEL_AUTHORS',
   SET_RESPONSE_ERROR = prefix + 'SET_RESPONSE_ERROR',
   SET_FORM_ERROR = prefix + 'SET_FORM_ERROR',
   SET_SUCCESS_MESSAGE = prefix + 'SET_SUCCESS_MESSAGE',

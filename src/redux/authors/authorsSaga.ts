@@ -157,11 +157,36 @@ function* delAuthor(action: actionWithPayload<number>) {
   }
 }
 
+function* delMarkedAuthors(action: actionWithPayload<number[]>) {
+  try {
+    yield call(AuthorsService.multipleremoveAuthors, action.payload)
+    yield put(AuthorsActions.setSuccessMessage('Элементы удалёны.'))
+    yield getAuthors()
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400 || error.response?.status === 404)
+        yield put(
+          AuthorsActions.setResponseError(error.response.data as ResponseError)
+        )
+    } else if (error instanceof Error) {
+      yield put(
+        AuthorsActions.setResponseError({
+          name: error.name,
+          code: 0,
+          message: 'Неизвестная ошибка',
+          type: error.message,
+        } as ResponseError)
+      )
+    }
+  }
+}
+
 export function* authorsWather() {
   yield takeLatest(LOCATION_CHANGE, getAuthors)
   yield takeEvery(AuthorsConstants.GET_AUTHOR_DETAILS, getAuthorDetails)
   yield takeEvery(AuthorsConstants.ADD_AUTHOR, addNewAuthor)
   yield takeEvery(AuthorsConstants.EDIT_AUTHOR, updateAuthor)
   yield takeEvery(AuthorsConstants.DEL_AUTHOR, delAuthor)
+  yield takeEvery(AuthorsConstants.MULTIPLE_DEL_AUTHORS, delMarkedAuthors)
   yield takeEvery(AuthorsConstants.GET_AUTHORS, getAllAuthors)
 }

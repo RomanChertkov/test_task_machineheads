@@ -1,4 +1,4 @@
-import { Avatar, Button, List } from 'antd'
+import { Avatar, Button, Checkbox, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
 import { Author } from '../models/Author'
@@ -8,12 +8,14 @@ interface AuthorListProps {
   authorsList: Author[]
   openEditor: (itemId: number) => void
   delItem: (itemId: number) => void
+  changeMultipleDelList: (checked: boolean, itemId: number) => void
 }
 
 const AuthorsList: FC<AuthorListProps> = ({
   authorsList,
   openEditor,
   delItem,
+  changeMultipleDelList,
 }) => {
   return (
     <>
@@ -41,7 +43,16 @@ const AuthorsList: FC<AuthorListProps> = ({
             ]}
           >
             <List.Item.Meta
-              avatar={<Avatar size={'large'} src={item.avatar?.url} />}
+              avatar={
+                <>
+                  <Checkbox
+                    onChange={(e) =>
+                      changeMultipleDelList(e.target.checked, item.id)
+                    }
+                  />
+                  <Avatar size={'large'} src={item.avatar?.url} />
+                </>
+              }
               title={`${item.lastName} ${item.name} ${item.secondName}`}
               description={`Добавлен в ${formatDate(item.createdAt)}`}
             />

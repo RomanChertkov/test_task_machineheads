@@ -84,18 +84,16 @@ export class AuthorsService {
     }
   }
 
-  // static async multipleremoveAuthors(ids: number[]) {
-  //   try {
-  //     return await api.delete('/manage/authors/multiple-remove', {
-  //       params: { id: ids },
-  // headers: {
-  //   'Content-Type': 'multipart/form-data',
-  // },
-  //     })
-  //   } catch (error) {
-  // if (axios.isAxiosError(error)) {
-  //   throw error as AxiosError
-  // }
-  // throw error
-  // }
+  static async multipleremoveAuthors(ids: number[]) {
+    try {
+      return await api.delete('/manage/authors/multiple-remove', {
+        params: { id: ids },
+      })
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
+      }
+      throw error
+    }
+  }
 }

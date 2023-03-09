@@ -51,7 +51,11 @@ export const AuthorsActions = {
       type: AuthorsConstants.DEL_AUTHOR,
       payload: authorId,
     } as const),
-
+  multipleDeleteAuthors: (AuthorsIds: number[]) =>
+    ({
+      type: AuthorsConstants.MULTIPLE_DEL_AUTHORS,
+      payload: AuthorsIds,
+    } as const),
   setSuccessMessage: (message: string) =>
     ({
       type: AuthorsConstants.SET_SUCCESS_MESSAGE,
