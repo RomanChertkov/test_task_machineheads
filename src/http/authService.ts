@@ -1,5 +1,5 @@
 import api, { API_URL } from './apiConfig'
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import { AuthResponse } from '../models/Auth'
 import { LoginData, UserProfile } from '../models/UserProfile'
 
@@ -19,15 +19,9 @@ export class AuthService {
       )
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        if (Number(error.response?.status) === 422) {
-          throw Error(error.response?.statusText)
-        }
-        if (Number(error.response?.status) === 400) {
-          throw Error(error.response?.data.message)
-        }
-        throw Error(error.message)
+        throw error as AxiosError
       }
-      throw error as Error
+      throw error
     }
   }
 
@@ -44,22 +38,22 @@ export class AuthService {
           },
         }
       )
-    } catch (error: unknown) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (Number(error.response?.status) === 400) {
-          throw Error(error.response?.data.message)
-        }
-        throw Error(error.message)
+        throw error as AxiosError
       }
-      throw error as Error
+      throw error
     }
   }
 
   static async getUserProfile(): Promise<AxiosResponse<UserProfile> | Error> {
     try {
       return await api.get<UserProfile>('/profile')
-    } catch (error: unknown) {
-      throw error as Error
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw error as AxiosError
+      }
+      throw error
     }
   }
 }

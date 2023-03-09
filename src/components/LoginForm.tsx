@@ -3,6 +3,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Typography, Alert } from 'antd'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { authActions } from '../redux/auth/authActions'
+import FormItem from 'antd/es/form/FormItem'
 
 const { Title } = Typography
 
@@ -12,27 +13,30 @@ interface LoginData {
 }
 
 const LoginForm: FC = () => {
-  const { isFetchingData, errorMessage } = useAppSelector((state) => state.auth)
+  const { isFetchingData, formErrors, responseErrors } = useAppSelector(
+    (state) => state.auth
+  )
   const dispatch = useAppDispatch()
 
   const onFinish = (values: LoginData) => {
     dispatch(authActions.getAuthData(values))
-    console.log('Success:', values)
-  }
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo)
   }
 
   return (
-    <Form
-      name="basic"
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      {errorMessage && <Alert message={errorMessage} type="error" closable />}
+    <Form name="basic" onFinish={onFinish} autoComplete="off">
+      {responseErrors.message && (
+        <FormItem>
+          <Alert message={responseErrors.message} type="error" closable />
+        </FormItem>
+      )}
+
       <Form.Item
+        validateStatus={
+          formErrors.find((item) => item.field === 'email')
+            ? 'error'
+            : 'success'
+        }
+        help={formErrors.find((item) => item.field === 'email')?.message}
         name="email"
         rules={[
           {
@@ -50,6 +54,12 @@ const LoginForm: FC = () => {
       </Form.Item>
 
       <Form.Item
+        validateStatus={
+          formErrors.find((item) => item.field === 'password')
+            ? 'error'
+            : 'success'
+        }
+        help={formErrors.find((item) => item.field === 'password')?.message}
         name="password"
         rules={[{ required: true, message: 'Введите Ваш пароль!' }]}
       >

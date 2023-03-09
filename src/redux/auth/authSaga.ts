@@ -1,17 +1,14 @@
 import { call, takeEvery, put, takeLatest, select } from 'redux-saga/effects'
 import { LOCATION_CHANGE } from 'connected-react-router'
-import { AxiosResponse } from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { AuthConstants } from './authConstants'
 import { LoginData, UserProfile } from '../../models/UserProfile'
 import { RootState, actionWithPayload } from '../store'
 import { AuthService } from '../../http/authService'
 import { AuthResponse } from '../../models/Auth'
 import { authActions } from './authActions'
-import AppCookie from // clearTokensFromCookie,
-// setTokensInCookie,
-// getCookieByKey,,
-
-'../../utils/cookieUtils'
+import AppCookie from '../../utils/cookieUtils'
+import { FormError, ResponseError } from '../../models/Errors'
 
 function* authWorker(action: actionWithPayload<LoginData>) {
   yield put(authActions.setIsFetchingData())
@@ -31,9 +28,25 @@ function* authWorker(action: actionWithPayload<LoginData>) {
       AuthService.getUserProfile
     )
     yield put(authActions.setProfileInfo(profileInfo.data))
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      yield put(authActions.setAuthErrorMessage(error.message))
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400)
+        yield put(
+          authActions.setResponseError(error.response.data as ResponseError)
+        )
+
+      if (error.response?.status === 422)
+        yield put(authActions.setFormErrors(error.response.data as FormError[]))
+    } else if (error instanceof Error) {
+      //yield put(authActions.setAuthErrorMessage('Неизвестная ошибка'))
+      yield put(
+        authActions.setResponseError({
+          name: error.name,
+          code: 0,
+          message: 'Неизвестная ошибка',
+          type: error.message,
+        } as ResponseError)
+      )
     }
   } finally {
     yield put(authActions.setIsFetchingData())
@@ -60,10 +73,24 @@ function* checkAuthToken() {
       AppCookie.setTokensInCookie(result.data)
 
       yield put(authActions.setIsAuth(true))
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log(error)
-        yield put(authActions.setAuthErrorMessage(error.message))
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400)
+          yield put(
+            authActions.setResponseError(error.response.data as ResponseError)
+          )
+        yield put(authActions.setIsAuth(false))
+      } else if (error instanceof Error) {
+        yield put(
+          authActions.setResponseError({
+            name: error.name,
+            code: 0,
+            message: 'Неизвестная ошибка',
+            type: error.message,
+          } as ResponseError)
+        )
+
+        yield put(authActions.setIsAuth(false))
       }
     }
   }

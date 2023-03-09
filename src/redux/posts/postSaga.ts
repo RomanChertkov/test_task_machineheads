@@ -93,6 +93,8 @@ function* addNewPost({ payload }: actionWithPayload<NewPostFromForm>) {
   try {
     yield put(postsActions.setIsSavingPost(true))
 
+    yield postsActions.setFormErrors({} as FormError[])
+
     yield call(PostsService.addPost, data)
 
     yield put(postsActions.setSuccessMessage('Элемент добавлен.'))
@@ -143,6 +145,8 @@ function* updatePost({
 
   try {
     yield put(postsActions.setIsSavingPost(true))
+
+    yield postsActions.setFormErrors({} as FormError[])
 
     yield call(PostsService.editPost, data)
 

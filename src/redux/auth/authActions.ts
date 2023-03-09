@@ -1,6 +1,7 @@
 import { AuthConstants } from './authConstants'
 import { LoginData, UserProfile } from '../../models/UserProfile'
 import { InferActionsType } from '../store'
+import { FormError, ResponseError } from '../../models/Errors'
 
 export type AppAuthActions = InferActionsType<typeof authActions>
 
@@ -21,11 +22,24 @@ export const authActions = {
     ({
       type: AuthConstants.IS_FETHCHING_AUTH_DATA,
     } as const),
-
+  /**/
   setAuthErrorMessage: (errorMessage: string) =>
     ({
       type: AuthConstants.SET_AUTH_ERROR_MESSAGE,
       payload: errorMessage,
+    } as const),
+  /**/
+
+  setResponseError: (responseError: ResponseError) =>
+    ({
+      type: AuthConstants.SET_RESPONSE_ERROR,
+      payload: responseError,
+    } as const),
+
+  setFormErrors: (formErrors: FormError[]) =>
+    ({
+      type: AuthConstants.SET_FORM_ERROR,
+      payload: formErrors,
     } as const),
 
   setProfileInfo: (profileInfo: UserProfile) =>
