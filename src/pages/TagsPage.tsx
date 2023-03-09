@@ -17,10 +17,13 @@ interface TagsPageProps {}
 const TagsPage: FC<TagsPageProps> = ({}) => {
   const dispatch = useAppDispatch()
 
-  const tagsList = useAppSelector((state) => state.tags.tags)
-  // const currentTag = useAppSelector((state) => state.tags.currentTag)
-  const responseError = useAppSelector((state) => state.tags.responseErrors)
-  const successAction = useAppSelector((state) => state.tags.successMessage)
+  const {
+    tags: tagsList,
+    responseErrors,
+    successMessage,
+    isMultiDeteting,
+    deletingTagId,
+  } = useAppSelector((state) => state.tags)
 
   const [open, setOpen] = useState(false)
   const [isNew, setIsNew] = useState(false)
@@ -29,19 +32,19 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
 
   const [api, contextHolder] = notification.useNotification()
   useEffect(() => {
-    successAction &&
+    successMessage &&
       api.success({
-        message: successAction,
+        message: successMessage,
       })
-  }, [successAction])
+  }, [successMessage])
 
   useEffect(() => {
-    responseError.name &&
+    responseErrors.name &&
       api.error({
-        message: responseError.name,
-        description: responseError.message,
+        message: responseErrors.name,
+        description: responseErrors.message,
       })
-  }, [responseError])
+  }, [responseErrors])
 
   function openEditor(tagId: number) {
     dispatch(TagsActions.getTagDetails(tagId))
@@ -52,7 +55,7 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
     dispatch(TagsActions.deleteTag(tagId))
   }
 
-  function multipleDel(checked: boolean, tagId: number) {
+  function changeMultipleDelList(checked: boolean, tagId: number) {
     console.log(checked)
     if (checked) setMultiplyDelList([...multiplyDelList, tagId])
     else {
@@ -83,10 +86,6 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
     <ErrorBoundary>
       {contextHolder}
 
-      {/* {successAction &&
-        api.success({
-          message: successAction,
-        })} */}
       <Title>Теги</Title>
 
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -95,7 +94,12 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
             <PlusOutlined />
             Добавить новый тег
           </Button>
-          <Button size="large" type="primary" onClick={deleteMarkedItems}>
+          <Button
+            size="large"
+            type="primary"
+            onClick={deleteMarkedItems}
+            loading={isMultiDeteting}
+          >
             <DeleteOutlined />
             Удалить выбранные теги
           </Button>
@@ -105,7 +109,8 @@ const TagsPage: FC<TagsPageProps> = ({}) => {
           tagsList={tagsList}
           openEditor={openEditor}
           delItem={delItem}
-          multipleDel={multipleDel}
+          changeMultipleDelList={changeMultipleDelList}
+          deletingTagId={deletingTagId}
         />
       </Space>
 

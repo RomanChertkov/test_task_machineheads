@@ -12,6 +12,9 @@ const initialState = {
   formErrors: [] as FormError[],
   isDataFetching: false,
   successMessage: '',
+  deletingTagId: 0,
+  isMultiDeteting: false,
+  isSaving: false,
 }
 
 export const tagsReducer = (
@@ -34,6 +37,12 @@ export const tagsReducer = (
     case TagsConstants.SET_FORM_ERROR:
       return { ...state, formErrors: action.payload }
 
+    case TagsConstants.SET_IS_DELETING_TAG:
+      return { ...state, deletingTagId: action.payload }
+    case TagsConstants.SET_IS_MULTI_DELETING_TAG:
+      return { ...state, isMultiDeteting: action.payload }
+    case TagsConstants.SET_IS_SAVING_TAG:
+      return { ...state, isSaving: action.payload }
     default:
       return state
   }

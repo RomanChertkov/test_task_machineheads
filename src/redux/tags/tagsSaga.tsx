@@ -32,8 +32,9 @@ function* getTags() {
   const pathname: string = yield select(
     (state: RootState) => state.router.location.pathname
   )
+  const tags: Tag[] = yield select((state: RootState) => state.tags.tags)
 
-  if (pathname === '/tags') {
+  if (pathname === '/tags' && tags.length === 0) {
     yield getAllTags()
   }
 }
@@ -67,11 +68,15 @@ function* getTagDetails({ payload }: actionWithPayload<number>) {
 
 function* AddNewTag(action: actionWithPayload<NewTag>) {
   try {
+    yield put(TagsActions.setIsSavingTag(true))
+
     yield call(TagsService.saveNewTag, action.payload)
 
     yield put(TagsActions.setSuccessMessage('Элемент добавлен.'))
 
-    yield getTags()
+    yield getAllTags()
+
+    yield put(TagsActions.setIsSavingTag(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400)
@@ -95,11 +100,15 @@ function* AddNewTag(action: actionWithPayload<NewTag>) {
 
 function* updateTag(action: actionWithPayload<EditTag>) {
   try {
+    yield put(TagsActions.setIsSavingTag(true))
+
     yield call(TagsService.editTag, action.payload)
 
     yield put(TagsActions.setSuccessMessage('Элемент обновлён.'))
 
-    yield getTags()
+    yield getAllTags()
+
+    yield put(TagsActions.setIsSavingTag(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)
@@ -123,9 +132,15 @@ function* updateTag(action: actionWithPayload<EditTag>) {
 
 function* delTag(action: actionWithPayload<number>) {
   try {
+    yield put(TagsActions.setIsDeletingTag(action.payload))
+
     yield call(TagsService.removeTag, action.payload)
+
     yield put(TagsActions.setSuccessMessage('Элемент удалён.'))
-    yield getTags()
+
+    yield getAllTags()
+
+    yield put(TagsActions.setIsDeletingTag(0))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)
@@ -147,9 +162,15 @@ function* delTag(action: actionWithPayload<number>) {
 
 function* delMarkedTags(action: actionWithPayload<number[]>) {
   try {
+    yield put(TagsActions.setIsMultiDeletingTag(true))
+
     yield call(TagsService.multipleRemoveTags, action.payload)
-    yield put(TagsActions.setSuccessMessage('Элемент удалён.'))
-    yield getTags()
+
+    yield put(TagsActions.setSuccessMessage('Элементы удалёны.'))
+
+    yield getAllTags()
+
+    yield put(TagsActions.setIsMultiDeletingTag(false))
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 400 || error.response?.status === 404)

@@ -69,4 +69,22 @@ export const TagsActions = {
       type: TagsConstants.SET_FORM_ERROR,
       payload: formErrors,
     } as const),
+
+  setIsDeletingTag: (tagId: number) =>
+    ({
+      type: TagsConstants.SET_IS_DELETING_TAG,
+      payload: tagId,
+    } as const),
+
+  setIsMultiDeletingTag: (flag: boolean) =>
+    ({
+      type: TagsConstants.SET_IS_MULTI_DELETING_TAG,
+      payload: flag,
+    } as const),
+
+  setIsSavingTag: (flag: boolean) =>
+    ({
+      type: TagsConstants.SET_IS_SAVING_TAG,
+      payload: flag,
+    } as const),
 }

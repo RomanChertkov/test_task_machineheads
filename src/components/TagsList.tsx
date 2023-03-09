@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, List } from 'antd'
+import { Button, Checkbox, List } from 'antd'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { FC } from 'react'
 import { Tag } from '../models/Tag'
@@ -8,14 +8,16 @@ interface TagsListProps {
   tagsList: Tag[]
   openEditor: (itemId: number) => void
   delItem: (itemId: number) => void
-  multipleDel: (checked: boolean, itemId: number) => void
+  changeMultipleDelList: (checked: boolean, itemId: number) => void
+  deletingTagId: number
 }
 
 const TagsList: FC<TagsListProps> = ({
   tagsList,
   openEditor,
   delItem,
-  multipleDel,
+  changeMultipleDelList,
+  deletingTagId,
 }) => {
   return (
     <>
@@ -37,7 +39,12 @@ const TagsList: FC<TagsListProps> = ({
                 <EditOutlined />
                 Редактировать
               </Button>,
-              <Button type="primary" danger onClick={() => delItem(item.id)}>
+              <Button
+                type="primary"
+                danger
+                onClick={() => delItem(item.id)}
+                loading={item.id === deletingTagId}
+              >
                 <DeleteOutlined /> Удалить
               </Button>,
             ]}
@@ -45,7 +52,9 @@ const TagsList: FC<TagsListProps> = ({
             <List.Item.Meta
               avatar={
                 <Checkbox
-                  onChange={(e) => multipleDel(e.target.checked, item.id)}
+                  onChange={(e) =>
+                    changeMultipleDelList(e.target.checked, item.id)
+                  }
                 />
               }
               title={item.name}

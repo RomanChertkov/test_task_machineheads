@@ -10,7 +10,7 @@ interface TagsFormProps {
 }
 
 const TagsForm: FC<TagsFormProps> = ({ isNew }) => {
-  const tg = useAppSelector((state) => state.tags.currentTag)
+  const { currentTag: tg, isSaving } = useAppSelector((state) => state.tags)
   const formErrors = useAppSelector((state) => state.tags.formErrors)
 
   const dispatch = useAppDispatch()
@@ -25,6 +25,7 @@ const TagsForm: FC<TagsFormProps> = ({ isNew }) => {
 
   return (
     <Form
+      disabled={isSaving}
       layout="vertical"
       onFinish={onFinish}
       fields={[
@@ -107,7 +108,12 @@ const TagsForm: FC<TagsFormProps> = ({ isNew }) => {
               placeholder="Введите заголовок "
             />
           </Form.Item>
-          <Button size="large" type="primary" htmlType="submit">
+          <Button
+            size="large"
+            type="primary"
+            htmlType="submit"
+            loading={isSaving}
+          >
             submit
           </Button>
         </Col>
