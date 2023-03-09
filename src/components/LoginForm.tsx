@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input, Typography, Alert } from 'antd'
 import { useAppDispatch, useAppSelector } from '../hooks/redux-hooks'
 import { authActions } from '../redux/auth/authActions'
@@ -26,16 +27,12 @@ const LoginForm: FC = () => {
   return (
     <Form
       name="basic"
-      // labelCol={{ span: 8 }}
-      // wrapperCol={{ span: 16 }}
-      // style={{ maxWidth: 300 }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
       {errorMessage && <Alert message={errorMessage} type="error" closable />}
       <Form.Item
-        label="Email"
         name="email"
         rules={[
           {
@@ -45,20 +42,27 @@ const LoginForm: FC = () => {
           },
         ]}
       >
-        <Input />
+        <Input
+          size="large"
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          placeholder="Ваш email"
+        />
       </Form.Item>
 
       <Form.Item
-        label="Password"
         name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        rules={[{ required: true, message: 'Введите Ваш пароль!' }]}
       >
-        <Input.Password />
+        <Input.Password
+          size="large"
+          prefix={<LockOutlined className="site-form-item-icon" />}
+          placeholder="Пароль"
+        />
       </Form.Item>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={isFetchingData}>
-          Submit
+          Войти
         </Button>
       </Form.Item>
     </Form>
